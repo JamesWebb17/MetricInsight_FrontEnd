@@ -46,7 +46,7 @@
         fetch('/configuration/get/MetricInsightConfiguration.json')
             .then(response => response.json())
             .then(my_config => {
-                fetch('http://127.0.0.1:5000/MetricInsight/start', {
+                fetch('http://148.60.220.43:5000/MetricInsight/start', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
