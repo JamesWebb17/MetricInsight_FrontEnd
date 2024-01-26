@@ -3,7 +3,8 @@
   "gpuCheckbox": "on",
   "freqCheckbox": "on",
   "FreqInput": "10",
-  "IntervalInput": "",
+  "intervalCheckbox": "on",
+  "IntervalInput": "5",
   "smoothingCheckbox": "on",
   "SmoothingInput": "1",
   "SaveInput": ""

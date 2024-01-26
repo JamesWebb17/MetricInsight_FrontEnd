@@ -70,7 +70,7 @@
     function maFonction() {
         console.log("Nouvel appel de la fonction.");
 
-        fetch("http://127.0.0.1:5000/MetricInsight/test", {
+        fetch("http://127.0.0.1:5000/MetricInsight/get_data", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -86,7 +86,12 @@
             })
             .then(data => {
                 console.log('Données récupérées:', data);
-
+                for (var i = 0; i < data.length; i++) {
+                    //console.log(data[i]);
+                    for (var j = 0; j < data[i].length; j++) {
+                        console.log(data[i][j]);
+                    }
+                }
                 if (data === "STOP") {
                     console.log("Arrêt de l'appel de la fonction.");
                     clearInterval(intervalId);

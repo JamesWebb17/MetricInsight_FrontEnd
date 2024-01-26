@@ -11,7 +11,7 @@ var helpRouter = require('./routes/help');
 var configRouter = require('./routes/configuration');
 var contactRouter = require('./routes/contact');
 var MetricInsightRouter = require('./routes/MetricInsight');
-var LoginRouter = require('./routes/Login');
+var LoginRouter = require('./routes/login');
 
 var apiRouter = require('./routes/api');
 
@@ -35,7 +35,7 @@ app.use('/help', helpRouter);
 app.use('/configuration', configRouter);
 app.use('/contact', contactRouter);
 app.use('/MetricInsight', MetricInsightRouter);
-app.use('/Login', LoginRouter);
+app.use('/login', LoginRouter);
 
 app.use('/api', apiRouter);
 
