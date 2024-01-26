@@ -1,0 +1,83 @@
+<!-- templates/mainPage.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Inclure le fichier head.html -->
+    <div id="head-placeholder"></div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="preload" href="/stylesheets/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <script src="/javascripts/app-client.js"></script>
+
+    <title>MetricInsight</title>
+</head>
+<body>
+<!-- Inclusion du header -->
+<div id="header-placeholder"></div>
+
+<!-- Contenu principal -->
+<div class="container mt-4">
+    <div class="jumbotron">
+        <h1 class="display-4">MetricInsight - Your vision at a glance</h1>
+        <p class="lead"> Discover a new level of clarity in performance monitoring with MetricInsight. Our advanced metrics collection and analysis tool provides in-depth insight into the health and performance of your systems.</p>
+        <hr class="my-4">
+        <p>✨ Powerful metrics: Get accurate, meaningful data with our wide range of metrics, from CPU performance to memory consumption and beyond.</p>
+        <p>🚀 Instant insight: Turn raw data into actionable information. MetricInsight provides immediate insights to optimize the efficiency of your infrastructure.</p>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <form id="startMetricInsight" class="mt-4" method="post">
+        <div style="text-align: center;">
+            <button id="submitFormButton" type="submit" class="btn btn-primary">Start Program</button>
+        </div>
+    </form>
+</div>
+
+<!-- Placeholder pour le footer -->
+<div id="footer-placeholder"></div>
+
+<script>
+    document.getElementById("startMetricInsight").addEventListener("submit", function (event) {
+        event.preventDefault();
+        document.getElementById("submitFormButton").disabled = true;
+
+        fetch('/configuration/get/MetricInsightConfiguration.json')
+            .then(response => response.json())
+            .then(my_config => {
+                fetch('http://127.0.0.1:5000/MetricInsight/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(my_config),
+                }).then(response => response.json())
+                    .then(data => {
+                       if (data.acknowledgement) {
+                           window.location.href = "/MetricInsight";
+                           console.log(data);}
+                        else {
+                           window.location.href = "/configuration";
+                           alert("Configuration is not valid. Please check it.");
+                           console.log(data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la requête fetch :', error);
+                    })
+                    .finally(() => {
+                        document.getElementById("submitFormButton").disabled = false;
+                    });
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération du fichier JSON :', error);
+                document.getElementById("submitFormButton").disabled = false;
+            });
+    });
+
+</script>
+</body>
+
+</html>
+

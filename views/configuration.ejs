@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Inclure le fichier head.html -->
+    <div id="head-placeholder"></div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="preload" href="/stylesheets/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/stylesheets/checkBox.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <script src="/javascripts/app-client.js"></script>
+
+    <title>Configuration</title>
+
+    <link>
+
+</head>
+<body class="container">
+<!-- Inclusion du header -->
+<div id="header-placeholder"></div>
+
+<div class="container mt-4">
+    <div class="jumbotron">
+        <h1 class="display-4">MetricInsight configuration</h1>
+        <hr class="my-4">
+    </div>
+</div>
+
+<!-- Formulaire pour envoyer les données au serveur -->
+<form id="MonitoringForm" action="/configuration/save_configuration" class="mt-4" method="post">
+    <p id="submitErrorMessage" style="display: none;"> Une erreur est survenue lors de la sauvegarde </p>
+    <div class="form-group">
+        <h3>PID option :</h3>
+        <div class="form-check">
+            <input type="checkbox" id="pidCheckbox" name="pidCheckbox" class="form-check-input" {% if my_config.pid %}checked{% endif %}>
+            <label for="pidCheckbox" class="form-check-label">Would you like to focus on a specific process?</label>
+        </div>
+        <div id="pid-additional-case" {% if not my_config.pid %}style="display: none;"{% endif %} class="mt-2">
+            <div class="form-group">
+                <label for="PIDInput">Target PID number :</label>
+                <input type="text" name="PIDInput" id="PIDInput" class="form-control" placeholder="0" {% if my_config.pid %}value="{{ my_config.pid_value }}"{% endif %}>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="form-group">
+        <h3>Monitoring options (at least one is mandatory) :</h3>
+        <div class="form-check">
+            <input type="checkbox" id="cpuCheckbox" name="cpuCheckbox" class="form-check-input" {% if my_config.cpu %}checked{% endif %}>
+            <label for="cpuCheckbox" class="form-check-label">Observation of CPU</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" id="gpuCheckbox" name="gpuCheckbox" class="form-check-input" {% if my_config.gpu %}checked{% endif %}>
+            <label for="gpuCheckbox" class="form-check-label">Observation of the GPU</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" id="memoryCheckbox" name="memoryCheckbox" class="form-check-input" {% if my_config.memory %}checked{% endif %}>
+            <label for="memoryCheckbox" class="form-check-label">Observation of the memory</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" id="powerCheckbox" name="powerCheckbox" class="form-check-input" {% if my_config.power %}checked{% endif %}>
+            <label for="powerCheckbox" class="form-check-label">Observation of the power</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <h3>Advanced options :</h3>
+        <div class="form-check">
+            <input type="checkbox" id="freqCheckbox" name="freqCheckbox" class="form-check-input" {% if my_config.frequency_enabled %}checked{% endif %}>
+            <label for="freqCheckbox" class="form-check-label">Change the frequency value</label>
+        </div>
+        <div id="freq-additional-case" {% if not my_config.frequency_enabled %}style="display: none;"{% endif %} class="mt-2">
+            <div class="form-group">
+                <label for="FreqInput">New value of frequency:</label>
+                <input type="text" name="FreqInput" id="FreqInput"class="form-control" placeholder="10" {% if my_config.frequency_enabled %}value="{{ my_config.frequency_value }}"{% endif %}>
+            </div>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" id="intervalCheckbox" name="intervalCheckbox" class="form-check-input" {% if my_config.interval_enabled %}checked{% endif %}>
+            <label for="intervalCheckbox" class="form-check-label">Change the interval value</label>
+        </div>
+        <div id="inerval-additional-case" {% if not my_config.interval_enabled %}style="display: none;"{% endif %} class="mt-2">
+            <div class="form-group">
+                <label for="IntervalInput">New value of interval:</label>
+                <input type="text" name="IntervalInput" id="IntervalInput" class="form-control" placeholder="∞" {% if my_config.interval_enabled %}value="{{ my_config.interval_value }}"{% endif %}>
+            </div>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" id="smoothingCheckbox" name="smoothingCheckbox" class="form-check-input" {% if my_config.smoothing_enabled %}checked{% endif %}>
+            <label for="smoothingCheckbox" class="form-check-label">Change the smoothing value</label>
+        </div>
+        <div id="smoothing-additional-case" {% if not my_config.smoothing_enabled %}style="display: none;"{% endif %} class="mt-2">
+            <div class="form-group">
+                <label for="SmoothingInput">New value of smoothing:</label>
+                <input type="text" name="SmoothingInput" id="SmoothingInput" class="form-control" placeholder="1" {% if my_config.smoothing_enabled %}value="{{ my_config.smoothing_value }}"{% endif %}>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <h3>Graphics options</h3>
+        <div class="form-check">
+            <input type="checkbox" id="plotCheckbox" name="plotCheckbox" class="form-check-input" {% if my_config.plot %}checked{% endif %}>
+            <label for="plotCheckbox" class="form-check-label">Plot the result</label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" id="saveCheckbox" name="saveCheckbox" class="form-check-input" {% if my_config.save_enabled %}checked{% endif %}>
+            <label for="saveCheckbox" class="form-check-label">Save the result on files</label>
+        </div>
+        <div id="save-additional-case" {% if not my_config.save_enabled %}style="display: none;"{% endif %} class="mt-2">
+            <div class="form-group">
+                <label for="SaveInput">Files name prefix :</label>
+                <input type="text" name="SaveInput" id="SaveInput" class="form-control" placeholder=" " {% if my_config.save_enabled %}value="{{ my_config.save_value }}"{% endif %}>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <h3>Debug option</h3>
+        <div class="form-check">
+            <input type="checkbox" id="verboseCheckbox" name="verboseCheckbox" class="form-check-input" {% if my_config.verbose %}checked{% endif %}>
+            <label for="verboseCheckbox" class="form-check-label">Plot more détails during inspection </label>
+        </div>
+    </div>
+    <button id="submitFormButton" type="submit" class="btn btn-primary">Save this configuration</button>
+</form>
+
+<!-- Placeholder pour le footer -->
+<div id="footer-placeholder"></div>
+
+<script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var my_config = <%- my_config %>;
+
+            if (my_config !== null) {
+                LoadConfig(my_config);
+            }
+
+            const pidCheckbox = document.getElementById('pidCheckbox');
+            const additionalCase = document.getElementById('pid-additional-case');
+
+            pidCheckbox.addEventListener('change', function () {
+                additionalCase.style.display = pidCheckbox.checked ? 'block' : 'none';
+            });
+
+
+            const freqCheckbox = document.getElementById('freqCheckbox');
+            const freqAdditionalCase = document.getElementById('freq-additional-case');
+
+            freqCheckbox.addEventListener('change', function () {
+                freqAdditionalCase.style.display = freqCheckbox.checked ? 'block' : 'none';
+            });
+
+            const intervalCheckbox = document.getElementById('intervalCheckbox');
+            const intervalAdditionalCase = document.getElementById('inerval-additional-case');
+
+            intervalCheckbox.addEventListener('change', function () {
+                intervalAdditionalCase.style.display = intervalCheckbox.checked ? 'block' : 'none';
+            });
+
+            const smoothingCheckbox = document.getElementById('smoothingCheckbox');
+            const smoothingAdditionalCase = document.getElementById('smoothing-additional-case');
+
+            smoothingCheckbox.addEventListener('change', function () {
+                smoothingAdditionalCase.style.display = smoothingCheckbox.checked ? 'block' : 'none';
+            });
+
+            const saveCheckbox = document.getElementById('saveCheckbox');
+            const saveAdditionalCase = document.getElementById('save-additional-case');
+
+            saveCheckbox.addEventListener('change', function () {
+                saveAdditionalCase.style.display = saveCheckbox.checked ? 'block' : 'none';
+
+            });
+
+            document.getElementById('MonitoringForm').addEventListener('submit', function(event) {
+                validateIntegerInput('PIDInput');
+                validateIntegerInput('FreqInput');
+                validateIntegerInput('IntervalInput');
+                validateIntegerInput('SmoothingInput');
+                validateStringInput('saveInput')
+            });
+
+            toggleDisplay('pidCheckbox', 'pid-additional-case');
+            toggleDisplay('freqCheckbox', 'freq-additional-case');
+            toggleDisplay('intervalCheckbox', 'inerval-additional-case');
+            toggleDisplay('smoothingCheckbox', 'smoothing-additional-case');
+            toggleDisplay('saveCheckbox', 'save-additional-case');
+        });
+
+        function toggleDisplay(checkboxId, additionalCaseId) {
+            const checkbox = document.getElementById(checkboxId);
+            const additionalCase = document.getElementById(additionalCaseId);
+
+            additionalCase.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        function LoadConfig(my_config) {
+
+            document.getElementById('pidCheckbox').checked = my_config.pidCheckbox ?? false;
+            if (!my_config.pidCheckbox || my_config.PIDInput === undefined) {
+                document.getElementById('PIDInput').setAttribute('placeholder', '0');
+            } else {
+                document.getElementById('PIDInput').value = my_config.PIDInput;
+            }
+
+            document.getElementById('cpuCheckbox').checked = my_config.cpuCheckbox;
+            document.getElementById('gpuCheckbox').checked = my_config.gpuCheckbox;
+            document.getElementById('memoryCheckbox').checked = my_config.memoryCheckbox;
+            document.getElementById('powerCheckbox').checked = my_config.powerCheckbox;
+
+            document.getElementById('freqCheckbox').checked = my_config.freqCheckbox;
+            if (!my_config.freqCheckbox || my_config.FreqInput === undefined) {
+                document.getElementById('FreqInput').setAttribute('placeholder', '10');
+            } else {
+                document.getElementById('FreqInput').value = my_config.FreqInput;
+            }
+
+            document.getElementById('intervalCheckbox').checked = my_config.intervalCheckbox;
+            if (!my_config.intervalCheckbox || my_config.IntervalInput === undefined) {
+                document.getElementById('IntervalInput').setAttribute('placeholder', '∞');
+            } else {
+                document.getElementById('IntervalInput').value = my_config.IntervalInput;
+            }
+
+
+            document.getElementById('smoothingCheckbox').checked = my_config.smoothingCheckbox;
+            if (!my_config.smoothingCheckbox || my_config.SmoothingInput === undefined) {
+                document.getElementById('SmoothingInput').setAttribute('placeholder', '1');
+            } else {
+                document.getElementById('SmoothingInput').value = my_config.SmoothingInput;
+            }
+
+            document.getElementById('plotCheckbox').checked = my_config.plotCheckbox;
+
+            document.getElementById('saveCheckbox').checked = my_config.saveCheckbox;
+            if (!my_config.saveCheckbox || my_config.SaveInput === undefined) {
+                document.getElementById('SaveInput').setAttribute('placeholder', '1');
+            } else {
+                document.getElementById('SaveInput').value = my_config.SaveInput;
+            }
+
+            document.getElementById('verboseCheckbox').checked = my_config.verboseCheckbox;
+
+        }
+
+        function validateIntegerInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (input && input.value.trim() !== '' && !/^\d+$/.test(input.value)) {
+                alert('Please enter an integer value for ' + inputId);
+                event.preventDefault(); // Prevent form submission
+            }
+        }
+
+        function validateStringInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (input && input.value && input.value.trim() === '') {
+                alert('Please enter a non-empty string for ' + inputId);
+                event.preventDefault(); // Prevent form submission
+            }
+        }
+
+
+
+</script>
+</body>
+</html>

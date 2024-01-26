@@ -1,0 +1,10 @@
+{
+  "PIDInput": "",
+  "gpuCheckbox": "on",
+  "freqCheckbox": "on",
+  "FreqInput": "10",
+  "IntervalInput": "",
+  "smoothingCheckbox": "on",
+  "SmoothingInput": "1",
+  "SaveInput": ""
+}

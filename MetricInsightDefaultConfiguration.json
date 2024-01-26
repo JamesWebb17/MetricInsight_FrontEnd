@@ -1,0 +1,11 @@
+{
+  "PIDInput": "",
+  "cpuCheckbox": "on",
+  "freqCheckbox": "on",
+  "FreqInput": "10",
+  "intervalCheckbox": "on",
+  "IntervalInput": "0",
+  "smoothingCheckbox": "on",
+  "SmoothingInput": "1",
+  "SaveInput": ""
+}
