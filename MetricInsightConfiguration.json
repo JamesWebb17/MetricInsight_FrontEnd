@@ -2,7 +2,7 @@
   "PIDInput": "",
   "gpuCheckbox": "on",
   "freqCheckbox": "on",
-  "FreqInput": "52",
+  "FreqInput": "50",
   "intervalCheckbox": "on",
   "IntervalInput": "5",
   "smoothingCheckbox": "on",

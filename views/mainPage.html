@@ -39,6 +39,9 @@
 <div id="footer-placeholder"></div>
 
 <script>
+
+    let adresseIP = "http://148.60.220.43:3001/"
+
     document.getElementById("startMetricInsight").addEventListener("submit", function (event) {
         event.preventDefault();
         document.getElementById("submitFormButton").disabled = true;
@@ -46,7 +49,7 @@
         fetch('/configuration/get/MetricInsightConfiguration.json')
             .then(response => response.json())
             .then(my_config => {
-                fetch('http://148.60.220.43:5000/MetricInsight/start', {
+                fetch(adresseIP + 'MetricInsight/start', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

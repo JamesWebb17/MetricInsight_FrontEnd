@@ -19,8 +19,6 @@
 
 <canvas id="myChart" width="400" height="200"></canvas>
 
-
-
 <!-- Placeholder pour le footer -->
 <div id="footer-placeholder"></div>
 
@@ -28,17 +26,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        var ctx = document.getElementById('myChart').getContext('2d');
+        let ctx = document.getElementById('myChart').getContext('2d');
 
         // Générez les données de la fonction y = x^2
-        var dataX = [];
-        var dataY = [];
-        for (var x = -10; x <= 10; x += 0.1) {
-            dataX.push(x);
-            dataY.push(x * x);
-        }
+        let dataX = [];
+        let dataY = [];
 
-        var myChart = new Chart(ctx, {
+        let myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: dataX,
@@ -63,51 +57,42 @@
                 }
             }
         });
-    });
-</script>
 
-<script>
-    function maFonction() {
-        console.log("Nouvel appel de la fonction.");
-
-        fetch("http://148.60.220.43:5000/MetricInsight/get_data", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
+        function addDataToGraph(data) {
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+                dataX.push(data[i][0]);
+                dataY.push(data[i][1]);
+                console.log(dataX, dataY);
             }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP! Statut: ${response.status}`);
-                } else {
-                    console.log("Réponse HTTP OK");
-                }
-                return response.json(); // Extraction des données JSON de la réponse
-            })
-            .then(data => {
-                console.log('Données récupérées:', data);
-                for (var i = 0; i < data.length; i++) {
-                    //console.log(data[i]);
-                    for (var j = 0; j < data[i].length; j++) {
-                        console.log(data[i][j]);
-                    }
-                }
-                if (data === "STOP") {
-                    console.log("Arrêt de l'appel de la fonction.");
-                    clearInterval(intervalId);
-                } else {
-                    console.log("L'appel de la fonction continue.");
-                }
-            })
-            .catch(error => {
-                console.error('Erreur lors de la récupération des données:', error);
-            });
-    }
 
-    // Appeler maFonction toutes les secondes
-    const intervalId = setInterval(maFonction, 1000);
+            myChart.data.labels = dataX;
+            myChart.data.datasets[0].data = dataY;
+            myChart.update();
 
+        }
 
+        let adresseIP = "http://148.60.220.43:3001/"
+
+        console.log("Démarrage de l'EventSource");
+        let sse = new EventSource(adresseIP + 'MetricInsight/get_data');
+        sse.addEventListener('message', function(e) {
+            let data = JSON.parse(e.data);
+            console.log(data);
+            if (!data) {
+                console.log('no data in event');
+                return;
+            }
+            else if (data['end'] === -1) {
+                console.log('closing connection')
+                sse.close()
+            }
+
+            else {
+                addDataToGraph(data['data']);
+            }
+        });
+    });
 
 </script>
 
