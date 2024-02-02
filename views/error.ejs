@@ -1,0 +1,43 @@
+<!-- views/error.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Inclure le fichier head.html -->
+    <div id="head-placeholder"></div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="preload" href="/stylesheets/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <script src="/javascripts/app-client.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <title>MetricInsight Error</title>
+</head>
+<body>
+
+<!-- Inclusion du header -->
+<div id="header-placeholder"></div>
+
+<div class="container mt-5">
+    <div class="card text-white bg-danger mb-3">
+        <div class="card-header">Error</div>
+        <div class="card-body">
+            <h5 class="card-title">Oops, something went wrong!</h5>
+            <p class="card-text">We're sorry, but there was an error processing your request. Please try again later.</p>
+            <p class="card-text"><strong>Error Details:</strong></p>
+            <p class="card-text"><strong>Error Message:</strong> <%= error.message %></p>
+            <p class="card-text"><strong>Error Code:</strong> <%= error.statusCode || 'N/A' %></p>
+            <p class="card-text"><strong>Stack Trace:</strong></p>
+            <pre class="card-text"><%= error.stack %></pre>
+
+            <a href="/" class="btn btn-primary">Go back to Home</a>
+        </div>
+    </div>
+</div>
+
+<!-- Placeholder pour le footer -->
+<div id="footer-placeholder"></div>
+</body>
+</html>

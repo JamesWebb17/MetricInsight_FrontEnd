@@ -17,7 +17,35 @@
 <!-- Inclusion du header -->
 <div id="header-placeholder"></div>
 
-<canvas id="myChart" width="400" height="200"></canvas>
+<div class="container mt-5">
+    <form id="startMetricInsight" class="mt-4" method="post">
+        <div style="text-align: center;">
+            <button id="submitFormButton" type="submit" class="btn btn-primary">Start MetricInsight</button>
+            <button id="saveDataButton" type="button" class="btn btn-success" style="display: none;">Save all data</button>
+        </div>
+    </form>
+</div>
+
+<div id="GPU_Chart_Container" class="container mt-5 text-center" style="display:none;">
+    <h2>%GPU</h2>
+
+    <!-- Canvas for the chart -->
+    <canvas id="GPU_Chart" width="400" height="200"></canvas>
+
+    <!-- Save button -->
+    <button id="GPU_saveButton" class="btn btn-primary mt-3" ali>Save Data</button>
+</div>
+
+<div id="Memory_Chart_Container" class="container mt-5 text-center" style="display:none;">
+    <h2>Memory utilisation</h2>
+
+    <!-- Canvas for the chart -->
+    <canvas id="Memory_Chart" width="400" height="200"></canvas>
+
+    <!-- Save button -->
+    <button id="Memory_saveButton" class="btn btn-primary mt-3">Save Data</button>
+</div>
+
 
 <!-- Placeholder pour le footer -->
 <div id="footer-placeholder"></div>
@@ -25,19 +53,19 @@
 </body>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let ctx = document.getElementById('myChart').getContext('2d');
 
-        // Générez les données de la fonction y = x^2
-        let dataX = [];
-        let dataY = [];
+    let adresseIP = "http://148.60.220.43:3001/";
+    let Charts = {};
+
+    function createGraphe(name, id, dataX, dataY) {
+        let ctx = document.getElementById(id).getContext('2d');
 
         let myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: dataX,
                 datasets: [{
-                    label: 'y = x^2',
+                    label: "% use of " + name,
                     data: dataY,
                     borderColor: 'blue',
                     borderWidth: 1,
@@ -48,40 +76,94 @@
                 scales: {
                     x: [{
                         type: 'linear',
-                        position: 'bottom'
+                        position: 'bottom',
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Temps (s)'
+                        }
                     }],
                     y: [{
                         type: 'linear',
-                        position: 'left'
+                        position: 'left',
+                        scaleLabel: {
+                            display: true,
+                            labelString: '% ' + name
+                        }
                     }]
                 }
             }
         });
+        Charts[name] = myChart;
+        document.getElementById(name + "_Chart_Container").style.display = "block";
+        return myChart;
+    }
 
-        function addDataToGraph(data) {
-            console.log(data);
-            for (let i = 0; i < data.length; i++) {
-                dataX.push(data[i][0]);
-                dataY.push(data[i][1]);
-                console.log(dataX, dataY);
-            }
-
-            myChart.data.labels = dataX;
-            myChart.data.datasets[0].data = dataY;
-            myChart.update();
-
+    function addDataToGraph(newData , myChart) {
+        let dataX = myChart.data.labels;
+        let dataY = myChart.data.datasets[0].data;
+        for (let i = 0; i < newData.length; i++) {
+            dataX.push(newData[i][0].toFixed(2));
+            dataY.push(newData[i][1]);
         }
 
-        let adresseIP = "http://148.60.220.43:3001/"
+        myChart.data.labels = dataX;
+        myChart.data.datasets[0].data = dataY;
+        myChart.update();
 
+    }
+
+    function startMetricInsight(event) {
+        event.preventDefault();
+        document.getElementById("submitFormButton").disabled = true;
+
+        fetch('/configuration/get/MetricInsightConfiguration.json')
+            .then(response => response.json())
+            .then(my_config => {
+                fetch(adresseIP + 'MetricInsight/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(my_config),
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.acknowledgement) {
+                        } else {
+                            alert("Configuration is not valid. Please check it.");
+                            window.location.href = "/configuration";
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la requête fetch :', error);
+                    })
+                    .finally(() => {
+                        if (my_config['gpuCheckbox'] === "on") {
+                            let GPU_Chart = createGraphe('GPU', 'GPU_Chart', [], [])
+                            createSSE('GPU');
+                        }
+                        if (my_config['memoryCheckbox'] === "on") {
+                            let Memory_Chart = createGraphe('Memory', 'Memory_Chart', [], [])
+                            createSSE('Memory');
+                        }
+                        //document.getElementById("submitFormButton").disabled = true;
+                    });
+
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération du fichier JSON :', error);
+                document.getElementById("submitFormButton").disabled = false;
+            });
+
+        document.getElementById('saveDataButton').style.display = 'block'; // Afficher le bouton de sauvegarde
+    }
+
+    function createSSE (name){
         console.log("Démarrage de l'EventSource");
-        let sse = new EventSource(adresseIP + 'MetricInsight/get_data');
+        let sse = new EventSource(adresseIP + 'MetricInsight/get_data/' + name);
         sse.addEventListener('message', function(e) {
             let data = JSON.parse(e.data);
-            console.log(data);
             if (!data) {
                 console.log('no data in event');
-                return;
             }
             else if (data['end'] === -1) {
                 console.log('closing connection')
@@ -89,10 +171,58 @@
             }
 
             else {
-                addDataToGraph(data['data']);
+                console.log(data);
+                addDataToGraph(data['data'], Charts[name]);
+
             }
         });
+    }
+
+    function init() {
+        document.getElementById("startMetricInsight").addEventListener("submit", startMetricInsight);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    document.getElementById('saveDataButton').addEventListener('click', function () {
+        saveAllChartData(Charts)
     });
+
+    function saveAllChartData(Charts) {
+
+        let ChartData = {};
+
+        for (let chartName in Charts) {
+            ChartData[chartName] = {
+                labels: Charts[chartName].data.labels,
+                datasets: [{
+                    label: Charts[chartName].data.datasets[0].label,
+                    data: Charts[chartName].data.datasets[0].data,
+                }]
+            };
+        }
+
+        // Convertissez les données en format JSON
+        let jsonData = JSON.stringify(ChartData, null, 2); // L'utilisation de null et 2 ajoute l'indentation pour une meilleure lisibilité
+
+        // Créez un objet Blob avec le contenu JSON
+        let blob = new Blob([jsonData], { type: 'application/json' });
+
+        // Créez un objet URL pour le Blob
+        let url = URL.createObjectURL(blob);
+
+        // Créez un élément d'ancre pour déclencher le téléchargement
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = 'chart_data.json'; // Nom du fichier à télécharger
+
+        // Ajoutez l'élément d'ancre à la page et cliquez dessus pour déclencher le téléchargement
+        document.body.appendChild(a);
+        a.click();
+
+        // Supprimez l'élément d'ancre de la page
+        document.body.removeChild(a);
+    }
 
 </script>
 

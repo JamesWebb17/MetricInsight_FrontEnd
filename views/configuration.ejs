@@ -100,23 +100,6 @@
     </div>
 
     <div class="form-group">
-        <h3>Graphics options</h3>
-        <div class="form-check">
-            <input type="checkbox" id="plotCheckbox" name="plotCheckbox" class="form-check-input" {% if my_config.plot %}checked{% endif %}>
-            <label for="plotCheckbox" class="form-check-label">Plot the result</label>
-        </div>
-        <div class="form-check">
-            <input type="checkbox" id="saveCheckbox" name="saveCheckbox" class="form-check-input" {% if my_config.save_enabled %}checked{% endif %}>
-            <label for="saveCheckbox" class="form-check-label">Save the result on files</label>
-        </div>
-        <div id="save-additional-case" {% if not my_config.save_enabled %}style="display: none;"{% endif %} class="mt-2">
-            <div class="form-group">
-                <label for="SaveInput">Files name prefix :</label>
-                <input type="text" name="SaveInput" id="SaveInput" class="form-control" placeholder=" " {% if my_config.save_enabled %}value="{{ my_config.save_value }}"{% endif %}>
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
         <h3>Debug option</h3>
         <div class="form-check">
             <input type="checkbox" id="verboseCheckbox" name="verboseCheckbox" class="form-check-input" {% if my_config.verbose %}checked{% endif %}>

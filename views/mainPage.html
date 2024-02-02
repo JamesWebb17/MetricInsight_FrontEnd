@@ -28,9 +28,9 @@
 </div>
 
 <div class="container mt-5">
-    <form id="startMetricInsight" class="mt-4" method="post">
+    <form id="viewMetricInsight" class="mt-4" method="post">
         <div style="text-align: center;">
-            <button id="submitFormButton" type="submit" class="btn btn-primary">Start Program</button>
+            <button id="submitFormButton" type="submit" class="btn btn-primary">MetricInsight</button>
         </div>
     </form>
 </div>
@@ -40,44 +40,13 @@
 
 <script>
 
-    let adresseIP = "http://148.60.220.43:3001/"
-
-    document.getElementById("startMetricInsight").addEventListener("submit", function (event) {
+    document.getElementById("submitFormButton").addEventListener("click", function (event) {
         event.preventDefault();
         document.getElementById("submitFormButton").disabled = true;
 
-        fetch('/configuration/get/MetricInsightConfiguration.json')
-            .then(response => response.json())
-            .then(my_config => {
-                fetch(adresseIP + 'MetricInsight/start', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(my_config),
-                }).then(response => response.json())
-                    .then(data => {
-                       if (data.acknowledgement) {
-                           window.location.href = "/MetricInsight";
-                           console.log(data);}
-                        else {
-                           window.location.href = "/configuration";
-                           alert("Configuration is not valid. Please check it.");
-                           console.log(data);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de la requête fetch :', error);
-                    })
-                    .finally(() => {
-                        document.getElementById("submitFormButton").disabled = false;
-                    });
-            })
-            .catch(error => {
-                console.error('Erreur lors de la récupération du fichier JSON :', error);
-                document.getElementById("submitFormButton").disabled = false;
-            });
+        window.location.href = "/MetricInsight";
     });
+
 
 </script>
 </body>
