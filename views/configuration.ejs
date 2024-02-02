@@ -37,8 +37,8 @@
         </div>
         <div id="pid-additional-case" {% if not my_config.pid %}style="display: none;"{% endif %} class="mt-2">
             <div class="form-group">
-                <label for="PIDInput">Target PID number :</label>
-                <input type="text" name="PIDInput" id="PIDInput" class="form-control" placeholder="0" {% if my_config.pid %}value="{{ my_config.pid_value }}"{% endif %}>
+                <label for="pidInput">Target PID number :</label>
+                <input type="text" name="pidInput" id="pidInput" class="form-control" placeholder="0" {% if my_config.pid %}value="{{ my_config.pid_value }}"{% endif %}>
             </div>
         </div>
     </div>
@@ -150,16 +150,9 @@
                 smoothingAdditionalCase.style.display = smoothingCheckbox.checked ? 'block' : 'none';
             });
 
-            const saveCheckbox = document.getElementById('saveCheckbox');
-            const saveAdditionalCase = document.getElementById('save-additional-case');
-
-            saveCheckbox.addEventListener('change', function () {
-                saveAdditionalCase.style.display = saveCheckbox.checked ? 'block' : 'none';
-
-            });
 
             document.getElementById('MonitoringForm').addEventListener('submit', function(event) {
-                validateIntegerInput('PIDInput');
+                validateIntegerInput('pidInput');
                 validateIntegerInput('FreqInput');
                 validateIntegerInput('IntervalInput');
                 validateIntegerInput('SmoothingInput');
@@ -170,7 +163,6 @@
             toggleDisplay('freqCheckbox', 'freq-additional-case');
             toggleDisplay('intervalCheckbox', 'inerval-additional-case');
             toggleDisplay('smoothingCheckbox', 'smoothing-additional-case');
-            toggleDisplay('saveCheckbox', 'save-additional-case');
         });
 
         function toggleDisplay(checkboxId, additionalCaseId) {
@@ -183,10 +175,10 @@
         function LoadConfig(my_config) {
 
             document.getElementById('pidCheckbox').checked = my_config.pidCheckbox ?? false;
-            if (!my_config.pidCheckbox || my_config.PIDInput === undefined) {
-                document.getElementById('PIDInput').setAttribute('placeholder', '0');
+            if (!my_config.pidCheckbox || my_config.pidInput === undefined) {
+                document.getElementById('pidInput').setAttribute('placeholder', '0');
             } else {
-                document.getElementById('PIDInput').value = my_config.PIDInput;
+                document.getElementById('pidInput').value = my_config.pidInput;
             }
 
             document.getElementById('cpuCheckbox').checked = my_config.cpuCheckbox;
@@ -208,21 +200,11 @@
                 document.getElementById('IntervalInput').value = my_config.IntervalInput;
             }
 
-
             document.getElementById('smoothingCheckbox').checked = my_config.smoothingCheckbox;
             if (!my_config.smoothingCheckbox || my_config.SmoothingInput === undefined) {
                 document.getElementById('SmoothingInput').setAttribute('placeholder', '1');
             } else {
                 document.getElementById('SmoothingInput').value = my_config.SmoothingInput;
-            }
-
-            document.getElementById('plotCheckbox').checked = my_config.plotCheckbox;
-
-            document.getElementById('saveCheckbox').checked = my_config.saveCheckbox;
-            if (!my_config.saveCheckbox || my_config.SaveInput === undefined) {
-                document.getElementById('SaveInput').setAttribute('placeholder', '1');
-            } else {
-                document.getElementById('SaveInput').value = my_config.SaveInput;
             }
 
             document.getElementById('verboseCheckbox').checked = my_config.verboseCheckbox;
