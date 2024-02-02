@@ -1,6 +1,6 @@
 {
+  "pidCheckbox": "on",
   "PIDInput": "",
-  "gpuCheckbox": "on",
   "memoryCheckbox": "on",
   "freqCheckbox": "on",
   "FreqInput": "10",

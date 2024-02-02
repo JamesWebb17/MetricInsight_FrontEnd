@@ -38,6 +38,16 @@
     <button id="GPU_saveButton" class="btn btn-primary mt-3" ali>Save Data</button>
 </div>
 
+<div id="Memory_PID_Chart_Container" class="container mt-5 text-center" style="display:none;">
+    <h2>Memory utilisation</h2>
+
+    <!-- Canvas for the chart -->
+    <canvas id="Memory_PID_Chart" width="400" height="200"></canvas>
+
+    <!-- Save button -->
+    <button id="Memory_PID_saveButton" class="btn btn-primary mt-3">Save Data</button>
+</div>
+
 <div id="Memory_Chart_Container" class="container mt-5 text-center" style="display:none;">
     <h2>Memory utilisation</h2>
 
@@ -67,7 +77,7 @@
             data: {
                 labels: dataX,
                 datasets: [{
-                    label: "% use of " + name,
+                    label: name,
                     data: dataY,
                     borderColor: 'blue',
                     borderWidth: 1,
@@ -150,14 +160,24 @@
                         console.error('Erreur lors de la requête fetch :', error);
                     })
                     .finally(() => {
+                        if (my_config['pidCheckbox'] === "on") {
+                            if (my_config['memoryCheckbox'] === "on") {
+                                let Memory_Chart = createGraphe('Memory_PID', 'Memory_PID_Chart', [], [])
+                                createSSE('Memory_PID');
+                            }
+                        }
+                        else {
+                            if (my_config['memoryCheckbox'] === "on") {
+                                let Memory_Chart = createGraphe('Memory', 'Memory_Chart', [], [])
+                                createSSE('Memory');
+                            }
+                        }
+
                         if (my_config['gpuCheckbox'] === "on") {
                             let GPU_Chart = createGraphe('GPU', 'GPU_Chart', [], [])
                             createSSE('GPU');
                         }
-                        if (my_config['memoryCheckbox'] === "on") {
-                            let Memory_Chart = createGraphe('Memory', 'Memory_Chart', [], [])
-                            createSSE('Memory');
-                        }
+
                         //document.getElementById("submitFormButton").disabled = true;
                     });
 
