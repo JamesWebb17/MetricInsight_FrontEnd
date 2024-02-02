@@ -17,10 +17,12 @@
 <!-- Inclusion du header -->
 <div id="header-placeholder"></div>
 
-<div class="container mt-5">
+<div class="container mt-5 text-center">
     <form id="startMetricInsight" class="mt-4" method="post">
         <div style="text-align: center;">
-            <button id="submitFormButton" type="submit" class="btn btn-primary">Start MetricInsight</button>
+            <button id="submitFormButtonStart" type="submit" class="btn btn-primary">Start MetricInsight</button>
+            <button id="submitFormButtonEnd" type="button" class="btn btn-primary" style="display: none;">Stop MetricInsight</button>
+            <button id="submitFormButtonReset" type="button" class="btn btn-primary" style="display: none;">Reset MetricInsight</button>
             <button id="saveDataButton" type="button" class="btn btn-success" style="display: none;">Save all data</button>
         </div>
     </form>
@@ -98,6 +100,13 @@
         return myChart;
     }
 
+    function suppressGraph(name) {
+        Charts[name].destroy()
+
+        document.getElementById(name + "_Chart_Container").style.display = "none";
+
+    }
+
     function addDataToGraph(newData , myChart) {
         let dataX = myChart.data.labels;
         let dataY = myChart.data.datasets[0].data;
@@ -114,7 +123,11 @@
 
     function startMetricInsight(event) {
         event.preventDefault();
-        document.getElementById("submitFormButton").disabled = true;
+        var originalDisplayStyle = document.getElementById("submitFormButtonStart").style.display;
+        document.getElementById("submitFormButtonStart").disabled = true;
+        document.getElementById("submitFormButtonStart").style.display = "none";
+        document.getElementById("submitFormButtonEnd").style.display = originalDisplayStyle;
+        document.getElementById("submitFormButtonReset").style.display = originalDisplayStyle;
 
         fetch('/configuration/get/MetricInsightConfiguration.json')
             .then(response => response.json())
@@ -151,10 +164,46 @@
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération du fichier JSON :', error);
-                document.getElementById("submitFormButton").disabled = false;
+                document.getElementById("submitFormButtonStart").disabled = false;
             });
 
         document.getElementById('saveDataButton').style.display = 'block'; // Afficher le bouton de sauvegarde
+    }
+
+    function endMetricInsight(event) {
+        event.preventDefault();
+        document.getElementById("submitFormButtonEnd").style.display = "none";
+
+        fetch(adresseIP + 'MetricInsight/stop', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({}),
+        }).then(response => response.json())
+            .then(data => {
+                if (data.acknowledgement) {
+                } else {
+                    alert("Error while stopping MetricInsight");
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la requête fetch :', error);
+            })
+            .finally(() => {
+                document.getElementById("submitFormButtonStart").disabled = false;
+            });
+
+    }
+
+    function resetMetricInsight() {
+        for (let chartName in Charts) {
+            suppressGraph(chartName);
+        }
+        let originalDisplayStyle = document.getElementById("submitFormButtonReset").style.display;
+        document.getElementById('saveDataButton').style.display = 'none';
+        document.getElementById("submitFormButtonStart").style.display = originalDisplayStyle;
+        document.getElementById("submitFormButtonReset").style.display = "none";
     }
 
     function createSSE (name){
@@ -180,6 +229,8 @@
 
     function init() {
         document.getElementById("startMetricInsight").addEventListener("submit", startMetricInsight);
+        document.getElementById("submitFormButtonEnd").addEventListener("click", endMetricInsight);
+        document.getElementById("submitFormButtonReset").addEventListener("click", resetMetricInsight);
     }
 
     document.addEventListener('DOMContentLoaded', init);

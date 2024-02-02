@@ -5,7 +5,7 @@
   "freqCheckbox": "on",
   "FreqInput": "10",
   "intervalCheckbox": "on",
-  "IntervalInput": "5",
+  "IntervalInput": "10",
   "smoothingCheckbox": "on",
   "SmoothingInput": "1"
 }
