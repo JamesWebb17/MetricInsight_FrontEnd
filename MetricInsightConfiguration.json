@@ -1,9 +1,6 @@
 {
   "pidCheckbox": "on",
   "pidInput": "567",
-  "cpuCheckbox": "on",
-  "gpuCheckbox": "on",
-  "memoryCheckbox": "on",
   "powerCheckbox": "on",
   "freqCheckbox": "on",
   "FreqInput": "10",

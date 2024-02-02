@@ -38,16 +38,6 @@
     <button id="GPU_saveButton" class="btn btn-primary mt-3" ali>Save Data</button>
 </div>
 
-<div id="Memory_PID_Chart_Container" class="container mt-5 text-center" style="display:none;">
-    <h2>Memory utilisation</h2>
-
-    <!-- Canvas for the chart -->
-    <canvas id="Memory_PID_Chart" width="400" height="200"></canvas>
-
-    <!-- Save button -->
-    <button id="Memory_PID_saveButton" class="btn btn-primary mt-3">Save Data</button>
-</div>
-
 <div id="Memory_Chart_Container" class="container mt-5 text-center" style="display:none;">
     <h2>Memory utilisation</h2>
 
@@ -56,6 +46,23 @@
 
     <!-- Save button -->
     <button id="Memory_saveButton" class="btn btn-primary mt-3">Save Data</button>
+</div>
+
+<div id="Power_Chart_Container" class="container mt-5 text-center" style="display:none;">
+    <h2>Power</h2>
+
+    <!-- Canvas for the chart -->
+    <h3>Power</h3>
+    <canvas id="Power_0_Chart" width="400" height="200"></canvas>
+    <h3>Power</h3>
+    <canvas id="Power_1_Chart" width="400" height="200"></canvas>
+    <h3>Power</h3>
+    <canvas id="Power_2_Chart" width="400" height="200"></canvas>
+    <h3>Power</h3>
+    <canvas id="Power_3_Chart" width="400" height="200"></canvas>
+
+    <!-- Save button -->
+    <button id="Power_saveButton" class="btn btn-primary mt-3" ali>Save Data</button>
 </div>
 
 
@@ -161,21 +168,26 @@
                     })
                     .finally(() => {
                         if (my_config['pidCheckbox'] === "on") {
-                            if (my_config['memoryCheckbox'] === "on") {
-                                let Memory_Chart = createGraphe('Memory_PID', 'Memory_PID_Chart', [], [])
-                                createSSE('Memory_PID');
-                            }
                         }
                         else {
-                            if (my_config['memoryCheckbox'] === "on") {
-                                let Memory_Chart = createGraphe('Memory', 'Memory_Chart', [], [])
-                                createSSE('Memory');
-                            }
+
+                        }
+
+                        if (my_config['memoryCheckbox'] === "on") {
+                            let Memory_Chart = createGraphe('Memory', 'Memory_Chart', [], [])
+                            createSSE('Memory');
                         }
 
                         if (my_config['gpuCheckbox'] === "on") {
                             let GPU_Chart = createGraphe('GPU', 'GPU_Chart', [], [])
                             createSSE('GPU');
+                        }
+                        if (my_config['powerCheckbox'] === "on") {
+                            let Power_0_Chart = createGraphe('Power', 'Power_0_Chart', [], [])
+                            let Power_1_Chart = createGraphe('Power', 'Power_1_Chart', [], [])
+                            let Power_2_Chart = createGraphe('Power', 'Power_2_Chart', [], [])
+                            let Power_3_Chart = createGraphe('Power', 'Power_3_Chart', [], [])
+                            createSSE('Power');
                         }
 
                         //document.getElementById("submitFormButton").disabled = true;
