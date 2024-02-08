@@ -14,7 +14,6 @@ router.get('/', async function(req, res, next) {
 
         // Analyser le JSON
         const my_config = JSON.parse(data);
-        console.log(my_config);
 
     res.render('configuration', { my_config: JSON.stringify(my_config) });
     });
@@ -35,8 +34,6 @@ router.get('/get/MetricInsightConfiguration.json', async function(req, res, next
 /* POST configuration page. */
 router.post('/save_configuration', async function(req, res, next) {
     const jsonString = JSON.stringify(req.body, null, 2);
-    console.log(jsonString);
-    // Code de traitement de la sauvegarde de configuration...
 
     fs.writeFileSync('../MetricInsightConfiguration.json', jsonString, 'utf-8');
     // Redirection vers la page d'accueil après la sauvegarde réussie
