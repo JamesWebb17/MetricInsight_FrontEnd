@@ -414,7 +414,7 @@
                 }
                 else if (name === 'CPU') {
                     let dataToPlot = [];
-                    for (let k = 0; k < 12; k++) {
+                    for (let k = 0; k < 13; k++) {
                         dataToPlot.push([]);
                     }
                     for (let i = 0; i < data['data'].length; i++) {
@@ -430,6 +430,7 @@
                         dataToPlot[9].push([data['data'][i][0], data['data'][i][10]]);
                         dataToPlot[10].push([data['data'][i][0], data['data'][i][11]]);
                         dataToPlot[11].push([data['data'][i][0], data['data'][i][12]]);
+                        dataToPlot[12].push([data['data'][i][0], data['data'][i][13]]);
                     }
 
                     console.log(dataToPlot);
