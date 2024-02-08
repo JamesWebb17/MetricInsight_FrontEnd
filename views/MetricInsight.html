@@ -48,22 +48,57 @@
     <button id="Memory_saveButton" class="btn btn-primary mt-3">Save Data</button>
 </div>
 
+<div id="Memory_PID_Chart_Container" class="container mt-5 text-center" style="display:none;">
+    <h2>Memory utilisation</h2>
+
+    <!-- Canvas for the chart -->
+    <canvas id="Memory_PID_Chart" width="400" height="200"></canvas>
+
+    <!-- Save button -->
+    <button id="Memory_PID_saveButton" class="btn btn-primary mt-3">Save Data</button>
+</div>
+
+<div id="CPU_PID_Chart_Container" class="container mt-5 text-center" style="display:none;">
+    <h2>CPU utilisation</h2>
+
+    <!-- Canvas for the chart -->
+    <canvas id="CPU_PID_Chart" width="400" height="200"></canvas>
+
+    <!-- Save button -->
+    <button id="CPU_PID_saveButton" class="btn btn-primary mt-3">Save Data</button>
+</div>
+
 <div id="Power_Chart_Container" class="container mt-5 text-center" style="display:none;">
     <h2>Power</h2>
 
-    <!-- Canvas for the chart -->
-    <h3>Power</h3>
-    <canvas id="Power_0_Chart" width="400" height="200"></canvas>
-    <h3>Power</h3>
-    <canvas id="Power_1_Chart" width="400" height="200"></canvas>
-    <h3>Power</h3>
-    <canvas id="Power_2_Chart" width="400" height="200"></canvas>
-    <h3>Power</h3>
-    <canvas id="Power_3_Chart" width="400" height="200"></canvas>
+    <!-- First Line -->
+    <div class="row">
+        <div class="col-md-6">
+            <h3>vdd gpu soc</h3>
+            <canvas id="Power_0_Chart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>vdd cpu cv</h3>
+            <canvas id="Power_1_Chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Second Line -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>vin sys 5 v0</h3>
+            <canvas id="Power_2_Chart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>vddq vdd2 1 v8ao</h3>
+            <canvas id="Power_3_Chart" width="400" height="200"></canvas>
+        </div>
+    </div>
 
     <!-- Save button -->
-    <button id="Power_saveButton" class="btn btn-primary mt-3" ali>Save Data</button>
+    <button id="Power_saveButton" class="btn btn-primary mt-3">Save Data</button>
 </div>
+
 
 
 <!-- Placeholder pour le footer -->
@@ -76,15 +111,15 @@
     let adresseIP = "http://148.60.220.43:3001/";
     let Charts = {};
 
-    function createGraphe(name, id, dataX, dataY) {
-        let ctx = document.getElementById(id).getContext('2d');
+    function createGraphe(chart_name, container_name ,canva_id, dataX, dataY) {
+        let ctx = document.getElementById(canva_id).getContext('2d');
 
         let myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: dataX,
                 datasets: [{
-                    label: name,
+                    label: chart_name,
                     data: dataY,
                     borderColor: 'blue',
                     borderWidth: 1,
@@ -106,14 +141,14 @@
                         position: 'left',
                         scaleLabel: {
                             display: true,
-                            labelString: '% ' + name
+                            labelString: '% ' + chart_name
                         }
                     }]
                 }
             }
         });
-        Charts[name] = myChart;
-        document.getElementById(name + "_Chart_Container").style.display = "block";
+        Charts[chart_name] = myChart;
+        document.getElementById(container_name + "_Chart_Container").style.display = "block";
         return myChart;
     }
 
@@ -168,25 +203,32 @@
                     })
                     .finally(() => {
                         if (my_config['pidCheckbox'] === "on") {
+                            if (my_config['cpuCheckbox'] === "on") {
+                                let CPU_Chart = createGraphe('CPU_PID', 'CPU_PID','CPU_PID_Chart', [], [])
+                                createSSE('CPU_PID');
+                            }
+
+                            if (my_config['memoryCheckbox'] === "on") {
+                                let Memory_Chart = createGraphe('Memory_PID', 'Memory_PID', 'Memory_PID_Chart', [], [])
+                                createSSE('Memory_PID');
+                            }
                         }
                         else {
-
-                        }
-
-                        if (my_config['memoryCheckbox'] === "on") {
-                            let Memory_Chart = createGraphe('Memory', 'Memory_Chart', [], [])
-                            createSSE('Memory');
+                            if (my_config['memoryCheckbox'] === "on") {
+                                let Memory_Chart = createGraphe('Memory','Memory', 'Memory_Chart', [], [])
+                                createSSE('Memory');
+                            }
                         }
 
                         if (my_config['gpuCheckbox'] === "on") {
-                            let GPU_Chart = createGraphe('GPU', 'GPU_Chart', [], [])
+                            let GPU_Chart = createGraphe('GPU', 'GPU', 'GPU_Chart', [], [])
                             createSSE('GPU');
                         }
                         if (my_config['powerCheckbox'] === "on") {
-                            let Power_0_Chart = createGraphe('Power', 'Power_0_Chart', [], [])
-                            let Power_1_Chart = createGraphe('Power', 'Power_1_Chart', [], [])
-                            let Power_2_Chart = createGraphe('Power', 'Power_2_Chart', [], [])
-                            let Power_3_Chart = createGraphe('Power', 'Power_3_Chart', [], [])
+                            let Power_0_Chart = createGraphe('vdd_gpu_soc', 'Power','Power_0_Chart', [], [])
+                            let Power_1_Chart = createGraphe('vdd_cpu_cv', 'Power', 'Power_1_Chart', [], [])
+                            let Power_2_Chart = createGraphe('vin_sys_5_v0','Power', 'Power_2_Chart', [], [])
+                            let Power_3_Chart = createGraphe('vddq_vdd2_1_v8_ao','Power', 'Power_3_Chart', [], [])
                             createSSE('Power');
                         }
 
@@ -252,9 +294,23 @@
             }
 
             else {
-                console.log(data);
-                addDataToGraph(data['data'], Charts[name]);
+                console.log(name);
+                if (name === 'Power') {
+                    for (let i = 0; i < data['data'].length; i++) {
+                        const resultArray = data['data'][i].slice(1).map(value => [data['data'][i][0], value]);
 
+                        addDataToGraph([resultArray[0]], Charts['vdd_gpu_soc']);
+                        addDataToGraph([resultArray[1]], Charts['vdd_cpu_cv']);
+                        addDataToGraph([resultArray[1]], Charts['vin_sys_5_v0']);
+                        addDataToGraph([resultArray[1]], Charts['vddq_vdd2_1_v8_ao']);
+
+                    }
+                }
+                else {
+                    console.log(data);
+                    addDataToGraph(data['data'], Charts[name]);
+
+                }
             }
         });
     }

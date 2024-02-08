@@ -11,6 +11,4 @@ COPY . .
 
 EXPOSE 3000
 
-WORKDIR /bin
-
-CMD ["npm", "start"]
+CMD node ./bin/www
