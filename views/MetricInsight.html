@@ -28,6 +28,99 @@
     </form>
 </div>
 
+<div id="CPU_PID_Chart_Container" class="container mt-5 text-center" style="display:none;">
+    <h2>% CPU</h2>
+
+    <!-- Canvas for the chart -->
+    <canvas id="CPU_PID_Chart" width="400" height="200"></canvas>
+
+    <!-- Save button -->
+    <button id="CPU_PID_saveButton" class="btn btn-primary mt-3">Save Data</button>
+</div>
+
+<div id="CPU_Chart_Container" class="container mt-5 text-center" style="display:none;">
+    <h2>% CPU</h2>
+
+    <!-- Canvas for the chart -->
+    <h3>CPU global</h3>
+    <canvas id="CPU_Chart" width="400" height="200"></canvas>
+
+    <!-- First Line -->
+    <div class="row">
+        <div class="col-md-6">
+            <h3>CPU core 0</h3>
+            <canvas id="CPU_0_Chart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>CPU core 1</h3>
+            <canvas id="CPU_1_Chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Second Line -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>CPU core 2</h3>
+            <canvas id="CPU_2_Chart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>CPU core 3</h3>
+            <canvas id="CPU_3_Chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Third Line -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>CPU core 4</h3>
+            <canvas id="CPU_4_Chart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>CPU core 5</h3>
+            <canvas id="CPU_5_Chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Fourth Line -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>CPU core 6</h3>
+            <canvas id="CPU_6_Chart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>CPU core 7</h3>
+            <canvas id="CPU_7_Chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Fifth Line -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>CPU core 8</h3>
+            <canvas id="CPU_8_Chart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>CPU core 9</h3>
+            <canvas id="CPU_9_Chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Third Line -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h3>CPU core 10</h3>
+            <canvas id="CPU_10_Chart" width="400" height="200"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h3>CPU core 11</h3>
+            <canvas id="CPU_11_Chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Save button -->
+    <button id="CPU_saveButton" class="btn btn-primary mt-3">Save Data</button>
+</div>
+
 <div id="GPU_Chart_Container" class="container mt-5 text-center" style="display:none;">
     <h2>% GPU</h2>
 
@@ -56,16 +149,6 @@
 
     <!-- Save button -->
     <button id="Memory_PID_saveButton" class="btn btn-primary mt-3">Save Data</button>
-</div>
-
-<div id="CPU_PID_Chart_Container" class="container mt-5 text-center" style="display:none;">
-    <h2>% CPU</h2>
-
-    <!-- Canvas for the chart -->
-    <canvas id="CPU_PID_Chart" width="400" height="200"></canvas>
-
-    <!-- Save button -->
-    <button id="CPU_PID_saveButton" class="btn btn-primary mt-3">Save Data</button>
 </div>
 
 <div id="Power_Chart_Container" class="container mt-5 text-center" style="display:none;">
@@ -214,6 +297,22 @@
                             }
                         }
                         else {
+                            if (my_config['cpuCheckbox'] === "on") {
+                                let CPU_Chart = createGraphe('CPU', 'CPU','CPU_Chart', [], [])
+                                let CPU_0_Chart = createGraphe('CPU_0', 'CPU_PID','CPU_0_Chart', [], [])
+                                let CPU_1_Chart = createGraphe('CPU_1', 'CPU_PID','CPU_1_Chart', [], [])
+                                let CPU_2_Chart = createGraphe('CPU_2', 'CPU_PID','CPU_2_Chart', [], [])
+                                let CPU_3_Chart = createGraphe('CPU_3', 'CPU_PID','CPU_3_Chart', [], [])
+                                let CPU_4_Chart = createGraphe('CPU_4', 'CPU_PID','CPU_4_Chart', [], [])
+                                let CPU_5_Chart = createGraphe('CPU_5', 'CPU_PID','CPU_5_Chart', [], [])
+                                let CPU_6_Chart = createGraphe('CPU_6', 'CPU_PID','CPU_6_Chart', [], [])
+                                let CPU_7_Chart = createGraphe('CPU_7', 'CPU_PID','CPU_7_Chart', [], [])
+                                let CPU_8_Chart = createGraphe('CPU_8', 'CPU_PID','CPU_8_Chart', [], [])
+                                let CPU_9_Chart = createGraphe('CPU_9', 'CPU_PID','CPU_9_Chart', [], [])
+                                let CPU_10_Chart = createGraphe('CPU_10', 'CPU_PID','CPU_10_Chart', [], [])
+                                let CPU_11_Chart = createGraphe('CPU_11', 'CPU_PID','CPU_11_Chart', [], [])
+                                createSSE('CPU');
+                            }
                             if (my_config['memoryCheckbox'] === "on") {
                                 let Memory_Chart = createGraphe('Memory','Memory', 'Memory_Chart', [], [])
                                 createSSE('Memory');
@@ -311,6 +410,43 @@
                     addDataToGraph(dataToPlot[1], Charts['vdd_cpu_cv']);
                     addDataToGraph(dataToPlot[2], Charts['vin_sys_5_v0']);
                     addDataToGraph(dataToPlot[3], Charts['vddq_vdd2_1_v8_ao']);
+
+                }
+                else if (name === 'CPU') {
+                    let dataToPlot = [];
+                    for (let k = 0; k < 12; k++) {
+                        dataToPlot.push([]);
+                    }
+                    for (let i = 0; i < data['data'].length; i++) {
+                        dataToPlot[0].push([data['data'][i][0], data['data'][i][1]]);
+                        dataToPlot[1].push([data['data'][i][0], data['data'][i][2]]);
+                        dataToPlot[2].push([data['data'][i][0], data['data'][i][3]]);
+                        dataToPlot[3].push([data['data'][i][0], data['data'][i][4]]);
+                        dataToPlot[4].push([data['data'][i][0], data['data'][i][5]]);
+                        dataToPlot[5].push([data['data'][i][0], data['data'][i][6]]);
+                        dataToPlot[6].push([data['data'][i][0], data['data'][i][7]]);
+                        dataToPlot[7].push([data['data'][i][0], data['data'][i][8]]);
+                        dataToPlot[8].push([data['data'][i][0], data['data'][i][9]]);
+                        dataToPlot[9].push([data['data'][i][0], data['data'][i][10]]);
+                        dataToPlot[10].push([data['data'][i][0], data['data'][i][11]]);
+                        dataToPlot[11].push([data['data'][i][0], data['data'][i][12]]);
+                    }
+
+                    console.log(dataToPlot);
+
+                    addDataToGraph(dataToPlot[0], Charts['CPU']);
+                    addDataToGraph(dataToPlot[1], Charts['CPU_0']);
+                    addDataToGraph(dataToPlot[2], Charts['CPU_1']);
+                    addDataToGraph(dataToPlot[3], Charts['CPU_2']);
+                    addDataToGraph(dataToPlot[4], Charts['CPU_3']);
+                    addDataToGraph(dataToPlot[5], Charts['CPU_4']);
+                    addDataToGraph(dataToPlot[6], Charts['CPU_5']);
+                    addDataToGraph(dataToPlot[7], Charts['CPU_6']);
+                    addDataToGraph(dataToPlot[8], Charts['CPU_7']);
+                    addDataToGraph(dataToPlot[9], Charts['CPU_8']);
+                    addDataToGraph(dataToPlot[10], Charts['CPU_9']);
+                    addDataToGraph(dataToPlot[11], Charts['CPU_10']);
+                    addDataToGraph(dataToPlot[12], Charts['CPU_11']);
 
                 }
                 else {
