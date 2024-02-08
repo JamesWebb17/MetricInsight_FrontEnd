@@ -29,7 +29,7 @@
 </div>
 
 <div id="GPU_Chart_Container" class="container mt-5 text-center" style="display:none;">
-    <h2>%GPU</h2>
+    <h2>% GPU</h2>
 
     <!-- Canvas for the chart -->
     <canvas id="GPU_Chart" width="400" height="200"></canvas>
@@ -59,7 +59,7 @@
 </div>
 
 <div id="CPU_PID_Chart_Container" class="container mt-5 text-center" style="display:none;">
-    <h2>CPU utilisation</h2>
+    <h2>% CPU</h2>
 
     <!-- Canvas for the chart -->
     <canvas id="CPU_PID_Chart" width="400" height="200"></canvas>
@@ -296,15 +296,22 @@
             else {
                 console.log(name);
                 if (name === 'Power') {
+                    let dataToPlot = [[], [], [], []];
+
                     for (let i = 0; i < data['data'].length; i++) {
-                        const resultArray = data['data'][i].slice(1).map(value => [data['data'][i][0], value]);
-
-                        addDataToGraph([resultArray[0]], Charts['vdd_gpu_soc']);
-                        addDataToGraph([resultArray[1]], Charts['vdd_cpu_cv']);
-                        addDataToGraph([resultArray[1]], Charts['vin_sys_5_v0']);
-                        addDataToGraph([resultArray[1]], Charts['vddq_vdd2_1_v8_ao']);
-
+                        dataToPlot[0].push([data['data'][i][0], data['data'][i][1]]);
+                        dataToPlot[1].push([data['data'][i][0], data['data'][i][2]]);
+                        dataToPlot[2].push([data['data'][i][0], data['data'][i][3]]);
+                        dataToPlot[3].push([data['data'][i][0], data['data'][i][4]]);
                     }
+
+                    console.log(dataToPlot);
+
+                    addDataToGraph(dataToPlot[0], Charts['vdd_gpu_soc']);
+                    addDataToGraph(dataToPlot[1], Charts['vdd_cpu_cv']);
+                    addDataToGraph(dataToPlot[2], Charts['vin_sys_5_v0']);
+                    addDataToGraph(dataToPlot[3], Charts['vddq_vdd2_1_v8_ao']);
+
                 }
                 else {
                     console.log(data);
