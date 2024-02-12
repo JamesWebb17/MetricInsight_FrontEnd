@@ -11,4 +11,6 @@ COPY . .
 
 EXPOSE 3000
 
-CMD node ./bin/www
+WORKDIR /app/bin
+
+CMD node ./www
