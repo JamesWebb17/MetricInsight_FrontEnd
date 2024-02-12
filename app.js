@@ -1,21 +1,35 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+/**
+ * @file app.js
+ * @summary Main file of the application
+ * @description This file is the main file of the application. It is used to define the application and its routes.
+ */
 
-var mainPageRouter = require('./routes/mainPage');
 
-var usersRouter = require('./routes/users');
-var helpRouter = require('./routes/help');
-var configRouter = require('./routes/configuration');
-var contactRouter = require('./routes/contact');
-var MetricInsightRouter = require('./routes/MetricInsight');
-var LoginRouter = require('./routes/login');
+/**
+ * Module dependencies.
+ */
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
 
-var apiRouter = require('./routes/api');
 
-var app = express();
+
+/**
+ * Get all routers from routes folder
+ */
+let mainPageRouter = require('./routes/mainPage');
+let usersRouter = require('./routes/users');
+let helpRouter = require('./routes/help');
+let configRouter = require('./routes/configuration');
+let contactRouter = require('./routes/contact');
+let MetricInsightRouter = require('./routes/MetricInsight');
+let LoginRouter = require('./routes/login');
+let apiRouter = require('./routes/api');
+
+// Create the application
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -28,15 +42,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Precise the routes to use
 app.use('/', mainPageRouter);
-
 app.use('/users', usersRouter);
 app.use('/help', helpRouter);
 app.use('/configuration', configRouter);
 app.use('/contact', contactRouter);
 app.use('/MetricInsight', MetricInsightRouter);
 app.use('/login', LoginRouter);
-
 app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
@@ -54,7 +67,5 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
 
 module.exports = app;

@@ -3,7 +3,24 @@
 /**
  * Module dependencies.
  */
+const os = require('os');
 
+// Récupérer les informations sur les interfaces réseau
+const networkInterfaces = os.networkInterfaces();
+
+// Trouver l'adresse IP de la première interface réseau (en supposant qu'il s'agisse de l'interface principale)
+const addresses = networkInterfaces['eth0'] // Adapter les noms des interfaces selon votre système
+let ipAddress = null;
+if (addresses) {
+    for (const address of addresses) {
+        if (address.family === 'IPv4') {
+            ipAddress = address.address;
+            break;
+        }
+    }
+}
+
+console.log('Adresse IP de la machine :', ipAddress);
 let app = require('../app');
 let debug = require('debug')('webapp:server');
 let http = require('http');
@@ -29,10 +46,11 @@ let server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-let adresseIP = process.env.SERVER_IP || 'localhost';
-server.listen(port, adresseIP, () => {
-  console.log(`Server is running at http://${adresseIP}:${port}/`);
-});
+// let adresseIP = process.env.SERVER_IP /*|| 'localhost';*/
+// console.log("SERVER_IP",adresseIP);
+server.listen(port, ipAddress, () => {
+  console.log(`Server is running at http://${ipAddress}:${port}/`);
+    });
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -66,8 +84,8 @@ function onError(error) {
   }
 
   let bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+      ? 'Pipe ' + port
+      : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -91,7 +109,7 @@ function onError(error) {
 function onListening() {
   let addr = server.address();
   let bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
