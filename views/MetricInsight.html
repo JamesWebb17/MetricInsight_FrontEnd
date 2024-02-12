@@ -262,7 +262,7 @@
 
     function startMetricInsight(event) {
         event.preventDefault();
-        var originalDisplayStyle = document.getElementById("submitFormButtonStart").style.display;
+        let originalDisplayStyle = document.getElementById("submitFormButtonStart").style.display;
         document.getElementById("submitFormButtonStart").disabled = true;
         document.getElementById("submitFormButtonStart").style.display = "none";
         document.getElementById("submitFormButtonEnd").style.display = originalDisplayStyle;

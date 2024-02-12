@@ -50,25 +50,18 @@
         event.preventDefault();
         document.getElementById("submitFormButton").disabled = true;
 
+        fetch('/MetricInsight/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(response => response.json())
+            .catch(error => {
+                console.error('Erreur lors de la requête fetch :', error);
+            })
+
         window.location.href = "/MetricInsight";
     });
-
-    // Fonction pour découvrir le backend
-    async function discoverBackend() {
-        try {
-            const response = await fetch('/api/discover-backend');  // Appel de l'API de découverte
-            const data = await response.json();
-
-            // Utilisez les informations découvertes (par exemple, data.ip et data.port)
-            console.log(`Backend discovered at ${data.ip}:${data.port}`);
-        } catch (error) {
-            console.error('Error discovering backend:', error);
-        }
-    }
-
-    // Appeler la fonction pour découvrir le backend au chargement de la page, par exemple
-    discoverBackend();
-
 
 
 </script>
