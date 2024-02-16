@@ -25,8 +25,8 @@ let helpRouter = require('./routes/help');
 let configRouter = require('./routes/configuration');
 let contactRouter = require('./routes/contact');
 let MetricInsightRouter = require('./routes/MetricInsight');
-let LoginRouter = require('./routes/login');
-let apiRouter = require('./routes/api');
+let loginRouter = require('./routes/login');
+let apiMetricInsightRouter = require('./routes/api/MetricInsight');
 
 // Create the application
 let app = express();
@@ -49,8 +49,8 @@ app.use('/help', helpRouter);
 app.use('/configuration', configRouter);
 app.use('/contact', contactRouter);
 app.use('/MetricInsight', MetricInsightRouter);
-app.use('/login', LoginRouter);
-app.use('/api', apiRouter);
+app.use('/login', loginRouter);
+app.use('/api/MetricInsight', apiMetricInsightRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

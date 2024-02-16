@@ -194,8 +194,8 @@
 </body>
 
 <script>
-
-    let adresseIP = "http://10.0.0.10:3001/";
+    //    let adresseIP = "http://10.0.0.10:3001/";
+    let adresseIP = "http://148.60.220.54:3001/";
     let Charts = {};
 
     function createGraphe(chart_name, container_name ,canva_id, dataX, dataY) {
@@ -271,18 +271,24 @@
         fetch('/configuration/get/MetricInsightConfiguration.json')
             .then(response => response.json())
             .then(my_config => {
-                fetch(adresseIP + 'MetricInsight/start', {
+                fetch('/api/MetricInsight/start', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(my_config),
-                }).then(response => response.json())
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Erreur HTTP! Statut: ${response.status}`);
+                        }
+                        return response.json(); // Analyse de la réponse JSON
+                    })
                     .then(data => {
-                        if (data.acknowledgement) {
+                        if (data.status) {
+                            console.log("MetricInsight started");
                         } else {
-                            alert("Configuration is not valid. Please check it.");
-                            window.location.href = "/configuration";
+                            console.log("Error while starting MetricInsight");
                         }
                     })
                     .catch(error => {
@@ -351,18 +357,26 @@
         event.preventDefault();
         document.getElementById("submitFormButtonEnd").style.display = "none";
 
-        fetch(adresseIP + 'MetricInsight/stop', {
+        fetch('/api/MetricInsight/stop', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({}),
-        }).then(response => response.json())
-            .then(data => {
-                if (data.acknowledgement) {
-                } else {
-                    alert("Error while stopping MetricInsight");
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP! Statut: ${response.status}`);
                 }
+                return response.json(); // Analyse de la réponse JSON
+            })
+            .then(data => {
+                if (data.status) {
+                    console.log("MetricInsight stopped");
+                    alert("MetricInsight stopped")
+                } else {
+                    console.log("Error while stopping MetricInsight");
+                }
+                console.log(data); // Accès aux données renvoyées par le serveur
             })
             .catch(error => {
                 console.error('Erreur lors de la requête fetch :', error);
@@ -370,7 +384,6 @@
             .finally(() => {
                 document.getElementById("submitFormButtonStart").disabled = false;
             });
-
     }
 
     function resetMetricInsight() {
@@ -385,13 +398,13 @@
 
     function createSSE (name){
         console.log("Démarrage de l'EventSource");
-        let sse = new EventSource(adresseIP + 'MetricInsight/get_data/' + name);
+        let sse = new EventSource('/api/MetricInsight/get_data/' + name);
         sse.addEventListener('message', function(e) {
             let data = JSON.parse(e.data);
             if (!data) {
                 console.log('no data in event');
             }
-            else if (data['end'] === -1) {
+            else if (!data.running) {
                 console.log('closing connection')
                 sse.close()
             }
