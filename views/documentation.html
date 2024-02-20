@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="/images/Logo_MetricInsight.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/images/Logo_MetricInsight.ico" type="image/x-icon">
+
+    <div id="head-placeholder"></div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="preload" href="/stylesheets/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+    <script src="/javascripts/app-client.js"></script>
+
+    <title>Documentation - MetricInsight</title>
+</head>
+<body>
+
+<!-- Inclusion du header -->
+<div id="header-placeholder"></div>
+
+<div class="container">
+    <img src="/images/Backend-Frontend_explanation.png" alt="Banner Image" class="w-100 mb-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="bg-light p-4 d-flex flex-column justify-content-center align-items-center">
+                <h2>Frontend</h2>
+                <p>
+                    The frontend is the part of the application with which the user interacts directly.
+                    It manages the user interface, data display and communication with the backend.
+                </p>
+                <button id="FrontEndGetDoc" class="btn btn-primary">Learn more about Frontend</button>
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="bg-light p-4 d-flex flex-column justify-content-center align-items-center">
+                <h2>Backend</h2>
+                <p>
+                    The backend is responsible for processing the application's data and business logic.
+                    It often communicates with a database and provides services to the user interface.
+                </p>
+                <button id="BackEndGetDoc" class="btn btn-primary">Learn more about Backend</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="footer-placeholder"></div>
+
+</body>
+
+<script>
+
+    document.getElementById("FrontEndGetDoc").addEventListener("click", function() {
+        window.open("/documentation/frontend", "_blank");
+    });
+
+    document.getElementById("BackEndGetDoc").addEventListener("click", function() {
+        window.open("/documentation/backend", "_blank");
+    });
+
+</script>
+
+</html>

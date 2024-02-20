@@ -161,11 +161,11 @@
     <!-- First Line -->
     <div class="row">
         <div class="col-md-6">
-            <h3>vdd gpu soc</h3>
+            <h3>GPU consumption</h3>
             <canvas id="Power_0_Chart" width="400" height="200"></canvas>
         </div>
         <div class="col-md-6">
-            <h3>vdd cpu cv</h3>
+            <h3>CPU consumption</h3>
             <canvas id="Power_1_Chart" width="400" height="200"></canvas>
         </div>
     </div>
@@ -194,11 +194,10 @@
 </body>
 
 <script>
-    //    let adresseIP = "http://10.0.0.10:3001/";
-    let adresseIP = "http://148.60.220.54:3001/";
+
     let Charts = {};
 
-    function createGraphe(chart_name, container_name ,canva_id, dataX, dataY) {
+    function createGraphe(chart_name, container_name ,canva_id, dataX, dataY, legend="test") {
         let ctx = document.getElementById(canva_id).getContext('2d');
 
         let myChart = new Chart(ctx, {
@@ -211,26 +210,26 @@
                     borderColor: 'blue',
                     borderWidth: 1,
                     fill: false
-                }]
+                }],
             },
             options: {
                 scales: {
-                    x: [{
+                    x: {
                         type: 'linear',
                         position: 'bottom',
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: 'Temps (s)'
+                            text: 'Temps (s)'
                         }
-                    }],
-                    y: [{
+                    },
+                    y: {
                         type: 'linear',
                         position: 'left',
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: '% ' + chart_name
+                            text: legend
                         }
-                    }]
+                    }
                 }
             }
         });
@@ -297,47 +296,47 @@
                     .finally(() => {
                         if (my_config['pidCheckbox'] === "on") {
                             if (my_config['cpuCheckbox'] === "on") {
-                                let CPU_Chart = createGraphe('CPU_PID', 'CPU_PID','CPU_PID_Chart', [], [])
+                                let CPU_Chart = createGraphe('CPU_PID', 'CPU_PID','CPU_PID_Chart', [], [], "CPU usage (%)")
                                 createSSE('CPU_PID');
                             }
 
                             if (my_config['memoryCheckbox'] === "on") {
-                                let Memory_Chart = createGraphe('Memory_PID', 'Memory_PID', 'Memory_PID_Chart', [], [])
+                                let Memory_Chart = createGraphe('Memory_PID', 'Memory_PID', 'Memory_PID_Chart', [], [], "Memory usage (kB)" )
                                 createSSE('Memory_PID');
                             }
                         }
                         else {
                             if (my_config['cpuCheckbox'] === "on") {
-                                let CPU_Chart = createGraphe('CPU', 'CPU','CPU_Chart', [], [])
-                                let CPU_0_Chart = createGraphe('CPU_0', 'CPU','CPU_0_Chart', [], [])
-                                let CPU_1_Chart = createGraphe('CPU_1', 'CPU','CPU_1_Chart', [], [])
-                                let CPU_2_Chart = createGraphe('CPU_2', 'CPU','CPU_2_Chart', [], [])
-                                let CPU_3_Chart = createGraphe('CPU_3', 'CPU','CPU_3_Chart', [], [])
-                                let CPU_4_Chart = createGraphe('CPU_4', 'CPU','CPU_4_Chart', [], [])
-                                let CPU_5_Chart = createGraphe('CPU_5', 'CPU','CPU_5_Chart', [], [])
-                                let CPU_6_Chart = createGraphe('CPU_6', 'CPU','CPU_6_Chart', [], [])
-                                let CPU_7_Chart = createGraphe('CPU_7', 'CPU','CPU_7_Chart', [], [])
-                                let CPU_8_Chart = createGraphe('CPU_8', 'CPU','CPU_8_Chart', [], [])
-                                let CPU_9_Chart = createGraphe('CPU_9', 'CPU','CPU_9_Chart', [], [])
-                                let CPU_10_Chart = createGraphe('CPU_10', 'CPU','CPU_10_Chart', [], [])
-                                let CPU_11_Chart = createGraphe('CPU_11', 'CPU','CPU_11_Chart', [], [])
+                                let CPU_Chart = createGraphe('CPU', 'CPU','CPU_Chart', [], [], "CPU usage (%)")
+                                let CPU_0_Chart = createGraphe('CPU_0', 'CPU','CPU_0_Chart', [], [], "CPU usage (%)")
+                                let CPU_1_Chart = createGraphe('CPU_1', 'CPU','CPU_1_Chart', [], [], "CPU usage (%)")
+                                let CPU_2_Chart = createGraphe('CPU_2', 'CPU','CPU_2_Chart', [], [], "CPU usage (%)")
+                                let CPU_3_Chart = createGraphe('CPU_3', 'CPU','CPU_3_Chart', [], [], "CPU usage (%)")
+                                let CPU_4_Chart = createGraphe('CPU_4', 'CPU','CPU_4_Chart', [], [], "CPU usage (%)")
+                                let CPU_5_Chart = createGraphe('CPU_5', 'CPU','CPU_5_Chart', [], [], "CPU usage (%)")
+                                let CPU_6_Chart = createGraphe('CPU_6', 'CPU','CPU_6_Chart', [], [], "CPU usage (%)")
+                                let CPU_7_Chart = createGraphe('CPU_7', 'CPU','CPU_7_Chart', [], [], "CPU usage (%)")
+                                let CPU_8_Chart = createGraphe('CPU_8', 'CPU','CPU_8_Chart', [], [], "CPU usage (%)")
+                                let CPU_9_Chart = createGraphe('CPU_9', 'CPU','CPU_9_Chart', [], [], "CPU usage (%)")
+                                let CPU_10_Chart = createGraphe('CPU_10', 'CPU','CPU_10_Chart', [], [], "CPU usage (%)")
+                                let CPU_11_Chart = createGraphe('CPU_11', 'CPU','CPU_11_Chart', [], [], "CPU usage (%)" )
                                 createSSE('CPU');
                             }
                             if (my_config['memoryCheckbox'] === "on") {
-                                let Memory_Chart = createGraphe('Memory','Memory', 'Memory_Chart', [], [])
+                                let Memory_Chart = createGraphe('Memory','Memory', 'Memory_Chart', [], [], "Memory usage (kB)")
                                 createSSE('Memory');
                             }
                         }
 
                         if (my_config['gpuCheckbox'] === "on") {
-                            let GPU_Chart = createGraphe('GPU', 'GPU', 'GPU_Chart', [], [])
+                            let GPU_Chart = createGraphe('GPU', 'GPU', 'GPU_Chart', [], [], "GPU usage (%)")
                             createSSE('GPU');
                         }
                         if (my_config['powerCheckbox'] === "on") {
-                            let Power_0_Chart = createGraphe('vdd_gpu_soc', 'Power','Power_0_Chart', [], [])
-                            let Power_1_Chart = createGraphe('vdd_cpu_cv', 'Power', 'Power_1_Chart', [], [])
-                            let Power_2_Chart = createGraphe('vin_sys_5_v0','Power', 'Power_2_Chart', [], [])
-                            let Power_3_Chart = createGraphe('vddq_vdd2_1_v8_ao','Power', 'Power_3_Chart', [], [])
+                            let Power_0_Chart = createGraphe('vdd_gpu_soc', 'Power','Power_0_Chart', [], [], "Power (mW)")
+                            let Power_1_Chart = createGraphe('vdd_cpu_cv', 'Power', 'Power_1_Chart', [], [], "Power (mW)")
+                            let Power_2_Chart = createGraphe('vin_sys_5_v0','Power', 'Power_2_Chart', [], [], "Power (mW)")
+                            let Power_3_Chart = createGraphe('vddq_vdd2_1_v8_ao','Power', 'Power_3_Chart', [], [], "Power (mW)")
                             createSSE('Power');
                         }
 

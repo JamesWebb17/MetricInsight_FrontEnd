@@ -1,9 +1,45 @@
+/** Express router for
+ * @module routes/configuration
+ * @requires express
+ * @requires path
+ * @requires fs
+ */
+
+/**
+ * express module
+ * @const
+ */
 let express = require('express');
+
+/**
+ * path module
+ * @const
+ */
+let path = require('path');
+
+/**
+ * fs module
+ * @const
+ */
 let fs = require('fs');
+
+/**
+ * Express router to mount user related functions on.
+ * @type {object}
+ * @const
+ * @namespace configuration
+ */
 let router = express.Router();
 
-
-/* GET configuration page. */
+/**
+ * Route serving configuration root.
+ * @name /
+ * @function
+ * @memberof module:routes/configuration~configuration
+ * @inner
+ * @param {string} path - Express path
+ * @param {callback} middleware - Express middleware.
+ */
 router.get('/', async function(req, res, next) {
 
     fs.readFile('../MetricInsightConfiguration.json', 'utf-8', (err, data) => {
@@ -20,6 +56,15 @@ router.get('/', async function(req, res, next) {
 
 });
 
+/**
+ * Route for getting the configuration file.
+ * @name /get/MetricInsightConfiguration
+ * @function
+ * @memberof module:routes/configuration~configuration
+ * @inner
+ * @param {string} path - Express path
+ * @param {callback} middleware - Express middleware.
+ */
 router.get('/get/MetricInsightConfiguration.json', async function(req, res, next) {
     fs.readFile('../MetricInsightConfiguration.json', 'utf-8', (err, data) => {
         if (err) {
@@ -31,7 +76,15 @@ router.get('/get/MetricInsightConfiguration.json', async function(req, res, next
     });
 });
 
-/* POST configuration page. */
+/**
+ * Route for saving the configuration file.
+ * @name /save_configuration
+ * @function
+ * @memberof module:routes/configuration~configuration
+ * @inner
+ * @param {string} path - Express path
+ * @param {callback} middleware - Express middleware.
+ */
 router.post('/save_configuration', async function(req, res, next) {
     const jsonString = JSON.stringify(req.body, null, 2);
 
@@ -39,6 +92,5 @@ router.post('/save_configuration', async function(req, res, next) {
     // Redirection vers la page d'accueil après la sauvegarde réussie
     res.redirect('/');
 });
-
 
 module.exports = router;

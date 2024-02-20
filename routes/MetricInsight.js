@@ -1,30 +1,41 @@
+/** Express router for
+ * @module routes/MetricInsight
+ * @requires express
+ * @requires path
+ */
+
+/**
+ * express module
+ * @const
+ */
 let express = require('express');
-let router = express.Router();
+
+/**
+ * path module
+ * @const
+ */
 let path = require('path');
-const {json} = require("express");
 
-let adresseIP = "http://10.0.0.10:3001/";
+/**
+ * Express router to mount user related functions on.
+ * @type {object}
+ * @const
+ * @namespace MetricInsight
+ */
+let router = express.Router();
 
 
-/* get startMetricInsight page. */
+/**
+ * Route serving MetricInsight root.
+ * @name /
+ * @function
+ * @memberof module:routes/MetricInsight~MetricInsight
+ * @inner
+ * @param {string} path - Express path
+ * @param {callback} middleware - Express middleware.
+ */
 router.get('/', function(req, res, next) {
     res.sendFile(path.join(__dirname, '../views/MetricInsight.html'));
 });
-
-/*
-    console.log('startMetricInsight');
-    fetch(adresseIP + 'api/hello', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    }).then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('Erreur lors de la requête fetch :', error);
-        })
- */
 
 module.exports = router;

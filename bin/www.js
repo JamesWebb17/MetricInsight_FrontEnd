@@ -1,19 +1,46 @@
 #!/usr/bin/env node
 
 /**
- * Module dependencies.
+ * @file www.js
+ * @module bin/www
+ * @description This file is the main file of the application. It is used to define the server and its configuration.
+ * @author Simon Faucher
+ * @date 2024-02-20
+ * @version 1.0
+ * @copyright Copyright (c) 2024 MetricInsight  All rights reserved.
  */
-const os = require('os');
+
+
+/**
+ * Module dependencies.
+ * @requires os
+ * @requires debug
+ * @requires http
+ * @requires dotenv
+ * @requires cors
+ */
+let os = require('os');
 let debug = require('debug')('webapp:server');
 let http = require('http');
 let dotenv = require('dotenv').config();
 let cors = require('cors');
 
+
+/**
+ * @type {*|Express|{}}
+ */
 let app = require('../app');
-const config = require('./config');
+
+/**
+ * @type {{Port_Frontend: number, IP_adresse_Backend: number, graphics: {point_per_display: number}, Port_Backend: number, IP_adresse_Frontend: number}|{}}
+ */
+let config = require('./config');
 
 
-// Récupérer les informations sur les interfaces réseau
+/**
+ * Get network interfaces information
+ * @type {NodeJS.Dict<NetworkInterfaceInfo[]>}
+ */
 const networkInterfaces = os.networkInterfaces();
 
 // Trouver l'adresse IP de la première interface réseau (en supposant qu'il s'agisse de l'interface principale)
@@ -30,7 +57,9 @@ if (addresses) {
 
 console.log('Adresse IP de la machine :', ipAddress);
 
-// Use CORS to allow all origins
+/**
+ * Use CORS to allow all origins
+ */
 app.use(cors());
 
 /**
@@ -39,15 +68,21 @@ app.use(cors());
 config.Port_Frontend = normalizePort(process.env.FRONTEND_PORT || '3000');
 app.set('port', config.Port_Frontend);
 
+/**
+ * Get IP adress for the frontend and the backend
+ */
 config.IP_adresse_Frontend = process.env.FRONTEND_IP || ipAddress ;
-
 config.IP_adresse_Backend = process.env.BACKEND_IP || 'localhost';
-config.Port_Backend = normalizePort(process.env.BACKEND_PORT || '3001');
 
+/**
+ * Get the port for the backend
+ */
+config.Port_Backend = normalizePort(process.env.BACKEND_PORT || '3001');
 console.log('Adresse IP du backend :', config.IP_adresse_Backend);
 
 /**
  * Create HTTP server.
+ * @description This function is used to create the server
  */
 let server = http.createServer(app);
 
@@ -62,6 +97,9 @@ server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
+ * @description This function is used to normalize the port
+ * @param {string} val
+ * @returns {number|*|boolean}
  */
 function normalizePort(val) {
   let port = parseInt(val, 10);
@@ -81,6 +119,8 @@ function normalizePort(val) {
 
 /**
  * Event listener for HTTP server "error" event.
+ * @description This function is used to handle the error
+ * @param {Error} error
  */
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -108,6 +148,7 @@ function onError(error) {
 
 /**
  * Event listener for HTTP server "listening" event.
+ * @description This function is used to handle the listening event
  */
 function onListening() {
   let addr = server.address();

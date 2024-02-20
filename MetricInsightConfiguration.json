@@ -1,11 +1,9 @@
 {
-  "pidCheckbox": "on",
-  "pidInput": "567",
-  "powerCheckbox": "on",
+  "pidInput": "",
+  "cpuCheckbox": "on",
   "freqCheckbox": "on",
-  "FreqInput": "10",
+  "FreqInput": "100",
   "intervalCheckbox": "on",
-  "IntervalInput": "10",
-  "smoothingCheckbox": "on",
-  "SmoothingInput": "1"
+  "IntervalInput": "60",
+  "SmoothingInput": ""
 }

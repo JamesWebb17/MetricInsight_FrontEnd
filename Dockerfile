@@ -13,4 +13,4 @@ EXPOSE 3000
 
 WORKDIR /app/bin
 
-CMD node ./www
+CMD node ./www.js
