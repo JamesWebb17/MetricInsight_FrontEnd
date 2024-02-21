@@ -1,9 +1,0 @@
-{
-  "pidInput": "",
-  "cpuCheckbox": "on",
-  "freqCheckbox": "on",
-  "FreqInput": "100",
-  "intervalCheckbox": "on",
-  "IntervalInput": "60",
-  "SmoothingInput": ""
-}

@@ -267,7 +267,7 @@
         document.getElementById("submitFormButtonEnd").style.display = originalDisplayStyle;
         document.getElementById("submitFormButtonReset").style.display = originalDisplayStyle;
 
-        fetch('/configuration/get/MetricInsightConfiguration.json')
+        fetch('/configuration/get/MetricInsightMonitoringConfiguration')
             .then(response => response.json())
             .then(my_config => {
                 fetch('/api/MetricInsight/start', {

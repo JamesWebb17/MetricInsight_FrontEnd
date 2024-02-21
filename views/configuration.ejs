@@ -23,108 +23,192 @@
     <!-- Include the header -->
     <div id="header-placeholder"></div>
 
-    <div class="container mt-4">
-        <div class="jumbotron">
-            <h1 class="display-4">MetricInsight configuration</h1>
-            <hr class="my-4">
+    <div class="row">
+
+        <div class="col-md-6">
+
+            <div class="container mt-4">
+                <div class="jumbotron">
+                    <h3 class="display-6 text-center">Monitoring configuration</h3>
+                    <hr class="my-4">
+                </div>
+            </div>
+
+            <!-- Form to send data to server -->
+            <form id="MonitoringForm" action="/configuration/save_monitoring_configuration" class="mt-4" method="post">
+                <p id="submitErrorMessage" style="display: none;"> Une erreur est survenue lors de la sauvegarde </p>
+                <div class="form-group">
+                    <h4>PID option :</h4>
+                    <div class="form-check">
+                        <input type="checkbox" id="pidCheckbox" name="pidCheckbox" class="form-check-input" {% if my_config.pid %}checked{% endif %}>
+                        <label for="pidCheckbox" class="form-check-label">Would you like to focus on a specific process?</label>
+                    </div>
+                    <div id="pid-additional-case" {% if not my_config.pid %}style="display: none;"{% endif %} class="mt-2">
+                        <div class="form-group">
+                            <label for="pidInput">Target PID number :</label>
+                            <input type="text" name="pidInput" id="pidInput" class="form-control" placeholder="0" {% if my_config.pid %}value="{{ my_config.pid_value }}"{% endif %}>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="form-group">
+                    <h4>Monitoring options (at least one is mandatory) :</h4>
+                    <div class="form-check">
+                        <input type="checkbox" id="cpuCheckbox" name="cpuCheckbox" class="form-check-input" {% if my_config.cpu %}checked{% endif %}>
+                        <label for="cpuCheckbox" class="form-check-label">Observation of CPU</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="gpuCheckbox" name="gpuCheckbox" class="form-check-input" {% if my_config.gpu %}checked{% endif %}>
+                        <label for="gpuCheckbox" class="form-check-label">Observation of the GPU</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="memoryCheckbox" name="memoryCheckbox" class="form-check-input" {% if my_config.memory %}checked{% endif %}>
+                        <label for="memoryCheckbox" class="form-check-label">Observation of the memory</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="powerCheckbox" name="powerCheckbox" class="form-check-input" {% if my_config.power %}checked{% endif %}>
+                        <label for="powerCheckbox" class="form-check-label">Observation of the power</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <h4>Advanced options :</h4>
+                    <div class="form-check">
+                        <input type="checkbox" id="freqCheckbox" name="freqCheckbox" class="form-check-input" {% if my_config.frequency_enabled %}checked{% endif %}>
+                        <label for="freqCheckbox" class="form-check-label">Change sampling frequency value </label>
+                    </div>
+                    <div id="freq-additional-case" {% if not my_config.frequency_enabled %}style="display: none;"{% endif %} class="mt-2">
+                        <div class="form-group">
+                            <label for="FreqInput">New value sampling frequency :</label>
+                            <input type="text" name="FreqInput" id="FreqInput"class="form-control" placeholder="10" {% if my_config.frequency_enabled %}value="{{ my_config.frequency_value }}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="intervalCheckbox" name="intervalCheckbox" class="form-check-input" {% if my_config.interval_enabled %}checked{% endif %}>
+                        <label for="intervalCheckbox" class="form-check-label">Change observation time value</label>
+                    </div>
+                    <div id="inerval-additional-case" {% if not my_config.interval_enabled %}style="display: none;"{% endif %} class="mt-2">
+                        <div class="form-group">
+                            <label for="IntervalInput">New observation time value :</label>
+                            <input type="text" name="IntervalInput" id="IntervalInput" class="form-control" placeholder="∞" {% if my_config.interval_enabled %}value="{{ my_config.interval_value }}"{% endif %}>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="smoothingCheckbox" name="smoothingCheckbox" class="form-check-input" {% if my_config.smoothing_enabled %}checked{% endif %}>
+                        <label for="smoothingCheckbox" class="form-check-label">Change the smoothing value</label>
+                    </div>
+                    <div id="smoothing-additional-case" {% if not my_config.smoothing_enabled %}style="display: none;"{% endif %} class="mt-2">
+                        <div class="form-group">
+                            <label for="SmoothingInput">New value of smoothing:</label>
+                            <input type="text" name="SmoothingInput" id="SmoothingInput" class="form-control" placeholder="1" {% if my_config.smoothing_enabled %}value="{{ my_config.smoothing_value }}"{% endif %}>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <h4>Debug option</h4>
+                    <div class="form-check">
+                        <input type="checkbox" id="verboseCheckbox" name="verboseCheckbox" class="form-check-input" {% if my_config.verbose %}checked{% endif %}>
+                        <label for="verboseCheckbox" class="form-check-label">Plot more détails during inspection </label>
+                    </div>
+                </div>
+            </form>
         </div>
+
+
+        <div class="col-md-6">
+
+            <div class="container mt-4">
+                <div class="jumbotron">
+                    <h3 class="display-6 text-center">Display configuration</h3>
+                    <hr class="my-4">
+                </div>
+            </div>
+
+            <form id="DisplayForm" action="/configuration/save_configuration" class="mt-4" method="post">
+                <p id="submitErrorMessage" style="display: none;"> Une erreur est survenue lors de la sauvegarde </p>
+                <div class="form-group">
+                    <h4>Display option :</h4>
+                    <div class="form-check">
+                        <input type="checkbox" id="meanCheckbox" name="meanCheckbox" class="form-check-input" {% if my_config.mean %}checked{% endif %}>
+                        <label for="meanCheckbox" class="form-check-label">Would you like to change the number of point plot per second ?</label>
+                    </div>
+                    <div id="mean-additional-case" {% if not my_config.mean %}style="display: none;"{% endif %} class="mt-2">
+                        <div class="form-group">
+                            <label for="meanInput">New value of mean :</label>
+                            <input type="text" name="meanInput" id="meanInput" class="form-control" placeholder="0" {% if my_config.mean %}value="{{ my_config.mean_value }}"{% endif %}>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <button id="submitFormsButton" class="btn btn-primary">Save this configuration</button>
+
     </div>
-
-    <!-- Form to send data to server -->
-    <form id="MonitoringForm" action="/configuration/save_configuration" class="mt-4" method="post">
-        <p id="submitErrorMessage" style="display: none;"> Une erreur est survenue lors de la sauvegarde </p>
-        <div class="form-group">
-            <h3>PID option :</h3>
-            <div class="form-check">
-                <input type="checkbox" id="pidCheckbox" name="pidCheckbox" class="form-check-input" {% if my_config.pid %}checked{% endif %}>
-                <label for="pidCheckbox" class="form-check-label">Would you like to focus on a specific process?</label>
-            </div>
-            <div id="pid-additional-case" {% if not my_config.pid %}style="display: none;"{% endif %} class="mt-2">
-                <div class="form-group">
-                    <label for="pidInput">Target PID number :</label>
-                    <input type="text" name="pidInput" id="pidInput" class="form-control" placeholder="0" {% if my_config.pid %}value="{{ my_config.pid_value }}"{% endif %}>
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="form-group">
-            <h3>Monitoring options (at least one is mandatory) :</h3>
-            <div class="form-check">
-                <input type="checkbox" id="cpuCheckbox" name="cpuCheckbox" class="form-check-input" {% if my_config.cpu %}checked{% endif %}>
-                <label for="cpuCheckbox" class="form-check-label">Observation of CPU</label>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="gpuCheckbox" name="gpuCheckbox" class="form-check-input" {% if my_config.gpu %}checked{% endif %}>
-                <label for="gpuCheckbox" class="form-check-label">Observation of the GPU</label>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="memoryCheckbox" name="memoryCheckbox" class="form-check-input" {% if my_config.memory %}checked{% endif %}>
-                <label for="memoryCheckbox" class="form-check-label">Observation of the memory</label>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="powerCheckbox" name="powerCheckbox" class="form-check-input" {% if my_config.power %}checked{% endif %}>
-                <label for="powerCheckbox" class="form-check-label">Observation of the power</label>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <h3>Advanced options :</h3>
-            <div class="form-check">
-                <input type="checkbox" id="freqCheckbox" name="freqCheckbox" class="form-check-input" {% if my_config.frequency_enabled %}checked{% endif %}>
-                <label for="freqCheckbox" class="form-check-label">Change the frequency value</label>
-            </div>
-            <div id="freq-additional-case" {% if not my_config.frequency_enabled %}style="display: none;"{% endif %} class="mt-2">
-                <div class="form-group">
-                    <label for="FreqInput">New value of frequency:</label>
-                    <input type="text" name="FreqInput" id="FreqInput"class="form-control" placeholder="10" {% if my_config.frequency_enabled %}value="{{ my_config.frequency_value }}"{% endif %}>
-                </div>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="intervalCheckbox" name="intervalCheckbox" class="form-check-input" {% if my_config.interval_enabled %}checked{% endif %}>
-                <label for="intervalCheckbox" class="form-check-label">Change the interval value</label>
-            </div>
-            <div id="inerval-additional-case" {% if not my_config.interval_enabled %}style="display: none;"{% endif %} class="mt-2">
-                <div class="form-group">
-                    <label for="IntervalInput">New value of interval:</label>
-                    <input type="text" name="IntervalInput" id="IntervalInput" class="form-control" placeholder="∞" {% if my_config.interval_enabled %}value="{{ my_config.interval_value }}"{% endif %}>
-                </div>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="smoothingCheckbox" name="smoothingCheckbox" class="form-check-input" {% if my_config.smoothing_enabled %}checked{% endif %}>
-                <label for="smoothingCheckbox" class="form-check-label">Change the smoothing value</label>
-            </div>
-            <div id="smoothing-additional-case" {% if not my_config.smoothing_enabled %}style="display: none;"{% endif %} class="mt-2">
-                <div class="form-group">
-                    <label for="SmoothingInput">New value of smoothing:</label>
-                    <input type="text" name="SmoothingInput" id="SmoothingInput" class="form-control" placeholder="1" {% if my_config.smoothing_enabled %}value="{{ my_config.smoothing_value }}"{% endif %}>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <h3>Debug option</h3>
-            <div class="form-check">
-                <input type="checkbox" id="verboseCheckbox" name="verboseCheckbox" class="form-check-input" {% if my_config.verbose %}checked{% endif %}>
-                <label for="verboseCheckbox" class="form-check-label">Plot more détails during inspection </label>
-            </div>
-        </div>
-        <button id="submitFormButton" type="submit" class="btn btn-primary">Save this configuration</button>
-    </form>
-
     <!-- Include the footer -->
     <div id="footer-placeholder"></div>
 
 <script>
+
+        document.getElementById('submitFormsButton').addEventListener('click', async function(e) {
+            e.preventDefault(); // Empêcher le rechargement de la page
+
+            let MonitoringForm = new FormData(document.getElementById('MonitoringForm'));
+            let DisplayForm = new FormData(document.getElementById('DisplayForm'));
+
+            let monitoring = {}
+            let display = {}
+
+            for (let [key, value] of MonitoringForm.entries()) {
+                monitoring[key] = value;
+            }
+
+            for (let [key, value] of DisplayForm.entries()) {
+                display[key] = value;
+            }
+
+            // Soumettre le formulaire 1
+            fetch('/configuration/save_monitoring_configuration', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(monitoring),
+            })
+                .then(response => console.log(MonitoringForm.entries()))
+                .catch(error => console.error(error));
+
+            // Soumettre le formulaire 2
+            fetch('/configuration/save_display_configuration', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(display),
+            })
+                .then(response => console.log(DisplayForm.entries()))
+                .catch(error => console.error(error));
+
+            window.location.href = '/';
+        });
+
         /**
          * Function to load the configuration from the file, and to display the correct value in the form
          */
         document.addEventListener('DOMContentLoaded', function () {
             let my_config = <%- my_config %>;
+            let graphics = <%- graphics %>;
 
             if (my_config !== null) {
                 LoadConfig(my_config);
+            }
+
+            if (graphics !== null) {
+                LoadGraphics(graphics);
             }
 
             const pidCheckbox = document.getElementById('pidCheckbox');
@@ -156,6 +240,13 @@
                 smoothingAdditionalCase.style.display = smoothingCheckbox.checked ? 'block' : 'none';
             });
 
+            const meanCheckbox = document.getElementById('meanCheckbox');
+            const meanAdditionalCase = document.getElementById('mean-additional-case');
+
+            meanCheckbox.addEventListener('change', function () {
+                meanAdditionalCase.style.display = meanCheckbox.checked ? 'block' : 'none';
+            });
+
 
             document.getElementById('MonitoringForm').addEventListener('submit', function(event) {
                 validateIntegerInput('pidInput');
@@ -163,12 +254,14 @@
                 validateIntegerInput('IntervalInput');
                 validateIntegerInput('SmoothingInput');
                 validateStringInput('saveInput')
+                validateIntegerInput('meanInput')
             });
 
             toggleDisplay('pidCheckbox', 'pid-additional-case');
             toggleDisplay('freqCheckbox', 'freq-additional-case');
             toggleDisplay('intervalCheckbox', 'inerval-additional-case');
             toggleDisplay('smoothingCheckbox', 'smoothing-additional-case');
+            toggleDisplay('meanCheckbox', 'mean-additional-case');
         });
 
         /**
@@ -188,6 +281,8 @@
          * @param my_config
          */
         function LoadConfig(my_config) {
+
+            // Monitoring configuration
 
             document.getElementById('pidCheckbox').checked = my_config.pidCheckbox ?? false;
             if (!my_config.pidCheckbox || my_config.pidInput === undefined) {
@@ -224,6 +319,20 @@
 
             document.getElementById('verboseCheckbox').checked = my_config.verboseCheckbox;
 
+        }
+
+        /**
+         * Function to load the graphics from the file, and to display the correct value in the form
+         * @param graphics
+         */
+        function LoadGraphics(graphics) {
+            console.log(graphics);
+            document.getElementById('meanCheckbox').checked = false;
+            if (graphics.mean_display === undefined) {
+                document.getElementById('meanInput').setAttribute('placeholder', '1');
+            } else {
+                document.getElementById('meanInput').value = graphics.mean_display;
+            }
         }
 
         /**
