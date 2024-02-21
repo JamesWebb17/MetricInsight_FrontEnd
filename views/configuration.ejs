@@ -132,15 +132,27 @@
                 <div class="form-group">
                     <h4>Display option :</h4>
                     <div class="form-check">
-                        <input type="checkbox" id="meanCheckbox" name="meanCheckbox" class="form-check-input" {% if my_config.mean %}checked{% endif %}>
+                        <input type="checkbox" id="meanCheckbox" name="meanCheckbox" class="form-check-input" {% if graphics.mean %}checked{% endif %}>
                         <label for="meanCheckbox" class="form-check-label">Would you like to change the number of point plot per second ?</label>
                     </div>
-                    <div id="mean-additional-case" {% if not my_config.mean %}style="display: none;"{% endif %} class="mt-2">
+                    <div id="mean-additional-case" {% if not graphics.mean %}style="display: none;"{% endif %} class="mt-2">
                         <div class="form-group">
                             <label for="meanInput">New value of mean :</label>
-                            <input type="text" name="meanInput" id="meanInput" class="form-control" placeholder="0" {% if my_config.mean %}value="{{ my_config.mean_value }}"{% endif %}>
+                            <input type="text" name="meanInput" id="meanInput" class="form-control" placeholder="0" {% if graphics.mean %}value="{{ my_config.mean_value }}"{% endif %}>
                         </div>
                     </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="slidingWindowCheckbox" name="slidingWindowCheckbox" class="form-check-input" {% if graphics.slidingWindow %}checked{% endif %}>
+                        <label for="slidingWindowCheckbox" class="form-check-label">Would you like to set a sliding window for graphics ?</label>
+                    </div>
+                    <div id="slidingWindow-additional-case" {% if not graphics.slidingWindow %}style="display: none;"{% endif %} class="mt-2">
+                        <div class="form-group">
+                            <label for="slidingWindowInput"> Value of the sliding window :</label>
+                            <input type="text" name="slidingWindowInput" id="slidingWindowInput" class="form-control" placeholder="0" {% if graphics.slidingWindowSize %}value="{{ my_config.mean_value }}"{% endif %}>
+                        </div>
+                    </div>
+
                 </div>
             </form>
 
@@ -155,7 +167,7 @@
 <script>
 
         document.getElementById('submitFormsButton').addEventListener('click', async function(e) {
-            e.preventDefault(); // Empêcher le rechargement de la page
+            e.preventDefault(); // Prevent page reload
 
             let MonitoringForm = new FormData(document.getElementById('MonitoringForm'));
             let DisplayForm = new FormData(document.getElementById('DisplayForm'));
@@ -171,7 +183,7 @@
                 display[key] = value;
             }
 
-            // Soumettre le formulaire 1
+            // Send the monitoring form data to the server
             fetch('/configuration/save_monitoring_configuration', {
                 method: 'POST',
                 headers: {
@@ -179,21 +191,24 @@
                 },
                 body: JSON.stringify(monitoring),
             })
-                .then(response => console.log(MonitoringForm.entries()))
-                .catch(error => console.error(error));
+                .then (
+                    // send the display form data to the server
+                    fetch('/configuration/save_display_configuration', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(display),
+                    })
+                        .catch(error => console.error(error))
+                    )
+                .catch(error => console.error(error))
+                .finally(
+                    // Redirect to the home page
+                    window.location.href = '/'
+                )
 
-            // Soumettre le formulaire 2
-            fetch('/configuration/save_display_configuration', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(display),
-            })
-                .then(response => console.log(DisplayForm.entries()))
-                .catch(error => console.error(error));
 
-            window.location.href = '/';
         });
 
         /**
@@ -247,6 +262,13 @@
                 meanAdditionalCase.style.display = meanCheckbox.checked ? 'block' : 'none';
             });
 
+            const slidingWindowCheckbox = document.getElementById('slidingWindowCheckbox');
+            const slidingWindowAdditionalCase = document.getElementById('slidingWindow-additional-case');
+
+            slidingWindowCheckbox.addEventListener('change', function () {
+                slidingWindowAdditionalCase.style.display = slidingWindowCheckbox.checked ? 'block' : 'none';
+            });
+
 
             document.getElementById('MonitoringForm').addEventListener('submit', function(event) {
                 validateIntegerInput('pidInput');
@@ -255,6 +277,7 @@
                 validateIntegerInput('SmoothingInput');
                 validateStringInput('saveInput')
                 validateIntegerInput('meanInput')
+                validateIntegerInput('slidingWindowInput')
             });
 
             toggleDisplay('pidCheckbox', 'pid-additional-case');
@@ -262,6 +285,7 @@
             toggleDisplay('intervalCheckbox', 'inerval-additional-case');
             toggleDisplay('smoothingCheckbox', 'smoothing-additional-case');
             toggleDisplay('meanCheckbox', 'mean-additional-case');
+            toggleDisplay('slidingWindowCheckbox', 'slidingWindow-additional-case')
         });
 
         /**
@@ -296,21 +320,21 @@
             document.getElementById('memoryCheckbox').checked = my_config.memoryCheckbox;
             document.getElementById('powerCheckbox').checked = my_config.powerCheckbox;
 
-            document.getElementById('freqCheckbox').checked = my_config.freqCheckbox;
+            document.getElementById('freqCheckbox').checked = false;
             if (!my_config.freqCheckbox || my_config.FreqInput === undefined) {
                 document.getElementById('FreqInput').setAttribute('placeholder', '10');
             } else {
                 document.getElementById('FreqInput').value = my_config.FreqInput;
             }
 
-            document.getElementById('intervalCheckbox').checked = my_config.intervalCheckbox;
+            document.getElementById('intervalCheckbox').checked = false;
             if (!my_config.intervalCheckbox || my_config.IntervalInput === undefined) {
                 document.getElementById('IntervalInput').setAttribute('placeholder', '∞');
             } else {
                 document.getElementById('IntervalInput').value = my_config.IntervalInput;
             }
 
-            document.getElementById('smoothingCheckbox').checked = my_config.smoothingCheckbox;
+            document.getElementById('smoothingCheckbox').checked = false;
             if (!my_config.smoothingCheckbox || my_config.SmoothingInput === undefined) {
                 document.getElementById('SmoothingInput').setAttribute('placeholder', '1');
             } else {
@@ -326,12 +350,19 @@
          * @param graphics
          */
         function LoadGraphics(graphics) {
-            console.log(graphics);
             document.getElementById('meanCheckbox').checked = false;
             if (graphics.mean_display === undefined) {
                 document.getElementById('meanInput').setAttribute('placeholder', '1');
             } else {
                 document.getElementById('meanInput').value = graphics.mean_display;
+            }
+
+            document.getElementById('slidingWindowCheckbox').checked = false;
+            console.log(graphics)
+            if (graphics.sliding_window === undefined) {
+                document.getElementById('slidingWindowInput').setAttribute('placeholder', '1');
+            } else {
+                document.getElementById('slidingWindowInput').value = graphics.sliding_window_size;
             }
         }
 

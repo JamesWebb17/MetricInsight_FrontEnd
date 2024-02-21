@@ -50,7 +50,21 @@ module.exports = {
          * @default 10
          * @type {number}
          */
-        mean_display: 1,
+        mean_display: 10,
+
+        /**
+         * @description Defines whether the graphics window is sliding.
+         * @default false
+         * @type {boolean}
+         */
+        sliding_window: false,
+
+        /**
+         * @description Defines the size of the sliding window.
+         * @default 10
+         * @type {number}
+         */
+        sliding_window_size: 10,
     },
 };
 

@@ -65,7 +65,7 @@ router.get('/', async function(req, res, next) {
 
 /**
  * Route for getting the configuration file.
- * @name /get/MetricInsightConfiguration
+ * @name /get/MetricInsightMonitoringConfiguration
  * @function
  * @memberof module:routes/configuration~configuration
  * @inner
@@ -74,6 +74,26 @@ router.get('/', async function(req, res, next) {
  */
 router.get('/get/MetricInsightMonitoringConfiguration', async function(req, res, next) {
     fs.readFile('../MetricInsightMonitoringConfiguration.json', 'utf-8', (err, data) => {
+        if (err) {
+            console.error('Erreur lors de la lecture du fichier :', err);
+            return;
+        }
+        const my_config = JSON.parse(data);
+        res.json(my_config);
+    });
+});
+
+/**
+ * Route for getting the configuration file.
+ * @name /get/MetricInsightDisplayConfiguration
+ * @function
+ * @memberof module:routes/configuration~configuration
+ * @inner
+ * @param {string} path - Express path
+ * @param {callback} middleware - Express middleware.
+ */
+router.get('/get/MetricInsightDisplayConfiguration', async function(req, res, next) {
+    fs.readFile('../MetricInsightDisplayConfiguration.json', 'utf-8', (err, data) => {
         if (err) {
             console.error('Erreur lors de la lecture du fichier :', err);
             return;
@@ -114,6 +134,11 @@ router.post('/save_display_configuration', async function(req, res, next) {
 
     if (req.body.meanCheckbox) {
         config.graphics.mean_display = req.body.meanInput;
+    }
+
+    if (req.body.slidingWindowCheckbox) {
+        config.graphics.sliding_window = true;
+        config.graphics.sliding_window_size = req.body.slidingWindowInput;
     }
     // Redirection vers la page d'accueil après la sauvegarde réussie
     res.redirect('/');
