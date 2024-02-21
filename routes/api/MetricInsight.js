@@ -107,8 +107,8 @@ router.get('/get_data/:name', async function(req, res, next) {
             let data = await getData(IP_address_backend, name);
 
             // If the data is too long (> config.graphics.point_per_display), divide it into chunks for display
-            if (data.data.length > config.graphics.point_per_display) {
-                const chunkSize = Math.ceil(data.data.length / config.graphics.point_per_display);
+            if (data.data.length > config.graphics.mean_display) {
+                const chunkSize = Math.ceil(data.data.length / config.graphics.mean_display);
 
                 // Diviser la liste en morceaux de taille chunkSize
                 let dividedList= [];

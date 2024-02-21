@@ -50,7 +50,7 @@ module.exports = {
          * @default 10
          * @type {number}
          */
-        point_per_display: 10,
+        mean_display: 1,
     },
 };
 
