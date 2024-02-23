@@ -7,6 +7,8 @@ It is a express application that serves the frontend for the MetricInsights appl
 
 This application is used to display the data from the backend and to configure the data to display.
 
+You can find the backend of the application [here](https://github.com/JamesWebb17/MetricInsight_BackEnd)
+
 This project is made by : Faucher Simon
 
 Version : 1.0
