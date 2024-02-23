@@ -112,7 +112,7 @@ router.get('/get_data/:name', async function(req, res, next) {
     const intervalId = setInterval(async () => {
         try {
             let data = await getData(IP_address_backend, name);
-            saveData(name, new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth() + 1) + '-' + new Date().getUTCDate(), data.data);
+            await saveData(name, new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth() + 1) + '-' + new Date().getUTCDate(), data.data);
 
             // If the data is too long (> config.graphics.point_per_display), divide it into chunks for display
             if (data.data.length > config.graphics.mean_display) {
@@ -182,6 +182,13 @@ router.get('/save_data/:name', function(req, res, next) {
         // Lisez le fichier et pipez-le dans la réponse
         const fileStream = fs.createReadStream(filePath);
         fileStream.pipe(res);
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error('Erreur lors de la suppression du fichier :', err);
+            } else {
+                console.log('Fichier supprimé avec succès.');
+            }
+        });
     } else {
         // Si le fichier n'existe pas, renvoyez une réponse 404
         res.status(404).send('Fichier non trouvé');
@@ -327,7 +334,7 @@ function saveData(name, folderName, newData) {
     let filePath = `${folderPath}/${date}_${name}.csv`;
 
     if (newData.length === 0) {
-        console.log('No data to save');
+        //console.log('No data to save');
     }
     else {
         let csvString = newData.map(row => row.join(',')).join('\n') + '\n';

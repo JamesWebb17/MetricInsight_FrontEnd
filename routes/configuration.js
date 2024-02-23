@@ -136,7 +136,12 @@ router.get('/get/MetricInsightDisplayConfiguration', async function(req, res, ne
 router.post('/save_monitoring_configuration', async function(req, res, next) {
     const jsonString = JSON.stringify(req.body, null, 2);
     fs.writeFileSync('../UserConfigurationFiles/MetricInsightMonitoringConfiguration.json', jsonString, 'utf-8');
-    // Redirection vers la page d'accueil après la sauvegarde réussie
+
+    // Update the configuration
+    config.monitoring.frequency = req.body.FreqInput;
+    config.monitoring.duration = req.body.IntervalInput;
+
+    // Redirect to the home page after successful save
     res.redirect('/');
 });
 

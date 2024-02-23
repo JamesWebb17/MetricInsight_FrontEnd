@@ -42,6 +42,25 @@ module.exports = {
     Port_Frontend: 3000,
 
     /**
+     * @description It is used to configure the monitoring options
+     */
+    monitoring: {
+        /**
+         * @description It is used to define the default frequence of the monitoring
+         * @default 10
+         * @type {number}
+         */
+        frequency: 10,
+
+        /**
+         * @description It is used to define the default duration of the monitoring
+         * @default 10
+         * @type {number}
+         */
+        duration: 10
+    },
+
+    /**
      * @description It is used to configure the graphics options
      */
     graphics:{

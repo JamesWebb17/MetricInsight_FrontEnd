@@ -1,11 +1,10 @@
 {
-  "pidCheckbox": "on",
-  "pidInput": "77648",
+  "pidInput": "",
   "cpuCheckbox": "on",
   "gpuCheckbox": "on",
   "memoryCheckbox": "on",
   "powerCheckbox": "on",
   "FreqInput": "10",
-  "IntervalInput": "100",
+  "IntervalInput": "110",
   "SmoothingInput": ""
 }

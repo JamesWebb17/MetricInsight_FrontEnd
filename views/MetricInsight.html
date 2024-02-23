@@ -403,75 +403,74 @@
             if (!data) {
                 console.log('no data in event');
             }
-            else if (!data.running) {
+            if (!data.running) {
                 console.log('closing connection')
                 sse.close()
             }
 
-            else {
-                //console.log(name);
-                if (name === 'Power') {
-                    let dataToPlot = [[], [], [], []];
+            //console.log(name);
+            if (name === 'Power') {
+                let dataToPlot = [[], [], [], []];
 
-                    for (let i = 0; i < data['data'].length; i++) {
-                        dataToPlot[0].push([data['data'][i][0], data['data'][i][1]]);
-                        dataToPlot[1].push([data['data'][i][0], data['data'][i][2]]);
-                        dataToPlot[2].push([data['data'][i][0], data['data'][i][3]]);
-                        dataToPlot[3].push([data['data'][i][0], data['data'][i][4]]);
-                    }
-
-                    //console.log(dataToPlot);
-
-                    addDataToGraph(dataToPlot[0], Charts['vdd_gpu_soc']);
-                    addDataToGraph(dataToPlot[1], Charts['vdd_cpu_cv']);
-                    addDataToGraph(dataToPlot[2], Charts['vin_sys_5_v0']);
-                    addDataToGraph(dataToPlot[3], Charts['vddq_vdd2_1_v8_ao']);
-
+                for (let i = 0; i < data['data'].length; i++) {
+                    dataToPlot[0].push([data['data'][i][0], data['data'][i][1]]);
+                    dataToPlot[1].push([data['data'][i][0], data['data'][i][2]]);
+                    dataToPlot[2].push([data['data'][i][0], data['data'][i][3]]);
+                    dataToPlot[3].push([data['data'][i][0], data['data'][i][4]]);
                 }
-                else if (name === 'CPU') {
-                    let dataToPlot = [];
-                    for (let k = 0; k < 13; k++) {
-                        dataToPlot.push([]);
-                    }
-                    for (let i = 0; i < data['data'].length; i++) {
-                        dataToPlot[0].push([data['data'][i][0], data['data'][i][1]]);
-                        dataToPlot[1].push([data['data'][i][0], data['data'][i][2]]);
-                        dataToPlot[2].push([data['data'][i][0], data['data'][i][3]]);
-                        dataToPlot[3].push([data['data'][i][0], data['data'][i][4]]);
-                        dataToPlot[4].push([data['data'][i][0], data['data'][i][5]]);
-                        dataToPlot[5].push([data['data'][i][0], data['data'][i][6]]);
-                        dataToPlot[6].push([data['data'][i][0], data['data'][i][7]]);
-                        dataToPlot[7].push([data['data'][i][0], data['data'][i][8]]);
-                        dataToPlot[8].push([data['data'][i][0], data['data'][i][9]]);
-                        dataToPlot[9].push([data['data'][i][0], data['data'][i][10]]);
-                        dataToPlot[10].push([data['data'][i][0], data['data'][i][11]]);
-                        dataToPlot[11].push([data['data'][i][0], data['data'][i][12]]);
-                        dataToPlot[12].push([data['data'][i][0], data['data'][i][13]]);
-                    }
 
-                    //console.log(dataToPlot);
+                //console.log(dataToPlot);
 
-                    addDataToGraph(dataToPlot[0], Charts['CPU']);
-                    addDataToGraph(dataToPlot[1], Charts['CPU_0']);
-                    addDataToGraph(dataToPlot[2], Charts['CPU_1']);
-                    addDataToGraph(dataToPlot[3], Charts['CPU_2']);
-                    addDataToGraph(dataToPlot[4], Charts['CPU_3']);
-                    addDataToGraph(dataToPlot[5], Charts['CPU_4']);
-                    addDataToGraph(dataToPlot[6], Charts['CPU_5']);
-                    addDataToGraph(dataToPlot[7], Charts['CPU_6']);
-                    addDataToGraph(dataToPlot[8], Charts['CPU_7']);
-                    addDataToGraph(dataToPlot[9], Charts['CPU_8']);
-                    addDataToGraph(dataToPlot[10], Charts['CPU_9']);
-                    addDataToGraph(dataToPlot[11], Charts['CPU_10']);
-                    addDataToGraph(dataToPlot[12], Charts['CPU_11']);
+                addDataToGraph(dataToPlot[0], Charts['vdd_gpu_soc']);
+                addDataToGraph(dataToPlot[1], Charts['vdd_cpu_cv']);
+                addDataToGraph(dataToPlot[2], Charts['vin_sys_5_v0']);
+                addDataToGraph(dataToPlot[3], Charts['vddq_vdd2_1_v8_ao']);
 
-                }
-                else {
-                    //console.log(data);
-                    addDataToGraph(data['data'], Charts[name]);
-
-                }
             }
+            else if (name === 'CPU') {
+                let dataToPlot = [];
+                for (let k = 0; k < 13; k++) {
+                    dataToPlot.push([]);
+                }
+                for (let i = 0; i < data['data'].length; i++) {
+                    dataToPlot[0].push([data['data'][i][0], data['data'][i][1]]);
+                    dataToPlot[1].push([data['data'][i][0], data['data'][i][2]]);
+                    dataToPlot[2].push([data['data'][i][0], data['data'][i][3]]);
+                    dataToPlot[3].push([data['data'][i][0], data['data'][i][4]]);
+                    dataToPlot[4].push([data['data'][i][0], data['data'][i][5]]);
+                    dataToPlot[5].push([data['data'][i][0], data['data'][i][6]]);
+                    dataToPlot[6].push([data['data'][i][0], data['data'][i][7]]);
+                    dataToPlot[7].push([data['data'][i][0], data['data'][i][8]]);
+                    dataToPlot[8].push([data['data'][i][0], data['data'][i][9]]);
+                    dataToPlot[9].push([data['data'][i][0], data['data'][i][10]]);
+                    dataToPlot[10].push([data['data'][i][0], data['data'][i][11]]);
+                    dataToPlot[11].push([data['data'][i][0], data['data'][i][12]]);
+                    dataToPlot[12].push([data['data'][i][0], data['data'][i][13]]);
+                }
+
+                //console.log(dataToPlot);
+
+                addDataToGraph(dataToPlot[0], Charts['CPU']);
+                addDataToGraph(dataToPlot[1], Charts['CPU_0']);
+                addDataToGraph(dataToPlot[2], Charts['CPU_1']);
+                addDataToGraph(dataToPlot[3], Charts['CPU_2']);
+                addDataToGraph(dataToPlot[4], Charts['CPU_3']);
+                addDataToGraph(dataToPlot[5], Charts['CPU_4']);
+                addDataToGraph(dataToPlot[6], Charts['CPU_5']);
+                addDataToGraph(dataToPlot[7], Charts['CPU_6']);
+                addDataToGraph(dataToPlot[8], Charts['CPU_7']);
+                addDataToGraph(dataToPlot[9], Charts['CPU_8']);
+                addDataToGraph(dataToPlot[10], Charts['CPU_9']);
+                addDataToGraph(dataToPlot[11], Charts['CPU_10']);
+                addDataToGraph(dataToPlot[12], Charts['CPU_11']);
+
+            }
+            else {
+                //console.log(data);
+                addDataToGraph(data['data'], Charts[name]);
+
+            }
+
         });
     }
 
