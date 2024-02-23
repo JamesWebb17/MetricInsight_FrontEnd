@@ -2,6 +2,7 @@
  * @module routes/api/MetricInsight
  * @requires express
  * @requires path
+ * @requires fs
  * @requires bin/config
  */
 
@@ -16,6 +17,12 @@ let express = require('express');
  * @const
  */
 let path = require('path');
+
+/**
+ * fs module
+ * @const
+ */
+let fs = require('fs');
 
 /**
  * config module
@@ -105,12 +112,13 @@ router.get('/get_data/:name', async function(req, res, next) {
     const intervalId = setInterval(async () => {
         try {
             let data = await getData(IP_address_backend, name);
+            saveData(name, new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth() + 1) + '-' + new Date().getUTCDate(), data.data);
 
             // If the data is too long (> config.graphics.point_per_display), divide it into chunks for display
             if (data.data.length > config.graphics.mean_display) {
                 const chunkSize = Math.ceil(data.data.length / config.graphics.mean_display);
 
-                // Diviser la liste en morceaux de taille chunkSize
+                // Divide the list into chunks
                 let dividedList= [];
                 for (let i = 0; i < data.data.length; i += chunkSize) {
                     const chunk = data.data.slice(i, i + chunkSize);
@@ -136,7 +144,7 @@ router.get('/get_data/:name', async function(req, res, next) {
 
 /**
  * Route for saving data from MetricInsight
- * @name /save_data:name
+ * @name /save_data/:name
  * @function
  * @memberof module:routes/api/MetricInsight~api/MetricInsight
  * @inner
@@ -144,11 +152,40 @@ router.get('/get_data/:name', async function(req, res, next) {
  * @param {string} path - Express path
  * @param {callback} middleware - Express middleware.
  */
-router.get('/save_data:name', function(req, res, next) {
-    let IP_address_backend = config.IP_adresse_Backend + ':' + config.Port_Backend;
+router.get('/save_data/:name', function(req, res, next) {
     let name = req.params.name;
-    res.json({ status: true, message: 'Data saved successfully' });
-    console.log(config.data);
+
+    let folderPath = config.saving.default_path + config.saving.default_file_name;
+    let fileName = `${config.saving.default_file_name}_${name}`;
+
+    if (config.saving.change_file_name) {
+        folderPath = config.saving.default_path + config.saving.user_file_name;
+        fileName = `${config.saving.user_file_name}_${name}`;
+
+    }
+
+    if (name === 'undefined') {
+        res.status(400).send('Missing name parameter');
+        return;
+    }
+
+    let date = new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth() + 1) + '-' + new Date().getUTCDate();
+
+    let filePath = `${folderPath}/${date}_${name}.csv`;
+
+    // Vérifiez si le fichier existe
+    if (fs.existsSync(filePath)) {
+        // Configurez les en-têtes de la réponse
+        res.set('Content-disposition', `attachment; filename=${encodeURI(fileName)}`);
+        res.set('Content-Type', 'application/octet-stream'); // Définissez le type de contenu en fonction du type de fichier
+
+        // Lisez le fichier et pipez-le dans la réponse
+        const fileStream = fs.createReadStream(filePath);
+        fileStream.pipe(res);
+    } else {
+        // Si le fichier n'existe pas, renvoyez une réponse 404
+        res.status(404).send('Fichier non trouvé');
+    }
 
 });
 
@@ -160,21 +197,21 @@ router.get('/save_data:name', function(req, res, next) {
  * @param {string} name
  * @returns {Promise<unknown>}
  */
-function getData(IP_address_backend, name) {
-    return new Promise((resolve, reject) => {
-        fetch(`http://${IP_address_backend}/MetricInsight/get_data/${name}`)
-            .then(response => {
-                if (response.ok) {
-                    resolve(response.json());
-                } else {
-                    reject('Error getting data');
-                }
-            })
-            .catch(error => {
-                reject('Error getting data', error);
-            });
-    });
+async function getData(IP_address_backend, name) {
+    try {
+        const response = await fetch(`http://${IP_address_backend}/MetricInsight/get_data/${name}`);
+
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            throw new Error('Error getting data');
+        }
+    } catch (error) {
+        throw new Error('Error getting data', error);
+    }
 }
+
 
 /**
  * function to start MetricInsight
@@ -195,13 +232,13 @@ function startMetricInsight(IP_address_backend, config) {
         })
             .then(response => {
                 if (response.ok) {
-                    resolve(true); // La requête est réussie, renvoie true
+                    resolve(true); // If the request is successful, return true
                 } else {
-                    reject(false); // La requête a échoué, renvoie false
+                    reject(false); // If the request fails, return false
                 }
             })
             .catch(error => {
-                reject(false); // Erreur lors de la requête, renvoie false
+                reject(false); // Error during the request, return false
             });
     });
 }
@@ -223,13 +260,13 @@ function stopMetricInsight(IP_address_backend) {
         })
             .then(response => {
                 if (response.ok) {
-                    resolve(true); // La requête est réussie, renvoie true
+                    resolve(true); // If the request is successful, return true
                 } else {
-                    reject(false); // La requête a échoué, renvoie false
+                    reject(false); // If the request fails, return false
                 }
             })
             .catch(error => {
-                reject(false); // Erreur lors de la requête, renvoie false
+                reject(false); // Error during the request, return false
             });
     });
 }
@@ -261,6 +298,48 @@ function calculerMoyenneColonnes(liste) {
     }
 
     return moyennesColonnes;
+}
+
+/**
+ * function to save data
+ * @name saveData
+ * @param {string} name
+ * @param {string} folderName
+ * @param {Array} newData
+ * @return {Promise<unknown>}
+ */
+function saveData(name, folderName, newData) {
+
+    let folderPath = config.saving.default_path + config.saving.default_file_name;
+
+    if (config.saving.change_file_name) {
+        folderPath = config.saving.default_path + config.saving.user_file_name;
+    }
+
+    // Check if the folder exists
+    if (!fs.existsSync(folderPath)) {
+        // If not, create it
+        fs.mkdirSync(folderPath);
+        console.log(`Le dossier "${folderPath}" a été créé.`);
+    }
+
+    let date = new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth() + 1) + '-' + new Date().getUTCDate();
+    let filePath = `${folderPath}/${date}_${name}.csv`;
+
+    if (newData.length === 0) {
+        console.log('No data to save');
+    }
+    else {
+        let csvString = newData.map(row => row.join(',')).join('\n') + '\n';
+
+        // Add the new data to the file
+        try {
+            fs.writeFileSync(filePath, csvString, {flag: 'a+'}, 'utf-8');
+        } catch (error) {
+            console.error('Error saving data:', error);
+        }
+    }
+
 }
 
 module.exports = router;

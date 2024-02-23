@@ -156,6 +156,31 @@
                 </div>
             </form>
 
+            <div class="container mt-4">
+                <div class="jumbotron">
+                    <h3 class="display-6 text-center">Saving configuration</h3>
+                    <hr class="my-4">
+                </div>
+            </div>
+
+            <form id="SavingForm" action="/configuration/save_configuration" class="mt-4" method="post">
+                <p id="submitErrorMessage" style="display: none;"> Une erreur est survenue lors de la sauvegarde </p>
+                <div class="form-group">
+                    <h4>Saving option :</h4>
+                    <div class="form-check">
+                        <input type="checkbox" id="saveCheckbox" name="saveCheckbox" class="form-check-input" {% if saving.change_file_name %}checked{% endif %}>
+                        <label for="saveCheckbox" class="form-check-label">Would you like to set a prefix for your files ? </label>
+                    </div>
+                    <div id="save-additional-case" {% if not saving.change_file_name %}style="display: none;"{% endif %} class="mt-2">
+                        <div class="form-group">
+                            <label for="saveInput">Choose your name here :</label>
+                            <input type="text" name="saveInput" id="saveInput" class="form-control" placeholder="0" {% if saving.user_file_name %}value="{{ my_config.mean_value }}"{% endif %}>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
         </div>
 
         <button id="submitFormsButton" class="btn btn-primary">Save this configuration</button>
@@ -171,9 +196,11 @@
 
             let MonitoringForm = new FormData(document.getElementById('MonitoringForm'));
             let DisplayForm = new FormData(document.getElementById('DisplayForm'));
+            let SavingForm = new FormData(document.getElementById('SavingForm'));
 
             let monitoring = {}
             let display = {}
+            let saving = {}
 
             for (let [key, value] of MonitoringForm.entries()) {
                 monitoring[key] = value;
@@ -183,33 +210,44 @@
                 display[key] = value;
             }
 
-            // Send the monitoring form data to the server
-            fetch('/configuration/save_monitoring_configuration', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(monitoring),
-            })
-                .then (
-                    // send the display form data to the server
-                    fetch('/configuration/save_display_configuration', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(display),
-                    })
-                        .catch(error => console.error(error))
-                    )
-                .catch(error => console.error(error))
-                .finally(
-                    // Redirect to the home page
-                    window.location.href = '/'
-                )
+            for (let [key, value] of SavingForm.entries()) {
+                saving[key] = value;
+            }
 
+            try {
+                await saveConfiguration('/configuration/save_monitoring_configuration', monitoring);
+                await saveConfiguration('/configuration/save_display_configuration', display);
+                await saveConfiguration('/configuration/save_saving_configuration', saving);
+
+                console.log('All configurations saved successfully');
+                // Redirect to the home page
+                window.location.href = '/';
+            } catch (error) {
+                console.error(error);
+            }
 
         });
+
+        /**
+         * Function to save the configuration to the file
+         * @param url
+         * @param data
+         * @return {Promise<void>}
+         */
+        async function saveConfiguration(url, data) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data),
+                });
+            } catch (error) {
+                console.error(error);
+                throw error; // Propagate the error
+            }
+        }
 
         /**
          * Function to load the configuration from the file, and to display the correct value in the form
@@ -217,6 +255,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             let my_config = <%- my_config %>;
             let graphics = <%- graphics %>;
+            let saving = <%- saving %>;
 
             if (my_config !== null) {
                 LoadConfig(my_config);
@@ -224,6 +263,10 @@
 
             if (graphics !== null) {
                 LoadGraphics(graphics);
+            }
+
+            if (saving !== null) {
+                LoadSaving(saving);
             }
 
             const pidCheckbox = document.getElementById('pidCheckbox');
@@ -269,6 +312,13 @@
                 slidingWindowAdditionalCase.style.display = slidingWindowCheckbox.checked ? 'block' : 'none';
             });
 
+            const saveCheckbox = document.getElementById('saveCheckbox');
+            const saveAdditionalCase = document.getElementById('save-additional-case');
+
+            saveCheckbox.addEventListener('change', function () {
+                saveAdditionalCase.style.display = saveCheckbox.checked ? 'block' : 'none';
+            });
+
 
             document.getElementById('MonitoringForm').addEventListener('submit', function(event) {
                 validateIntegerInput('pidInput');
@@ -286,6 +336,7 @@
             toggleDisplay('smoothingCheckbox', 'smoothing-additional-case');
             toggleDisplay('meanCheckbox', 'mean-additional-case');
             toggleDisplay('slidingWindowCheckbox', 'slidingWindow-additional-case')
+            toggleDisplay('saveCheckbox', 'save-additional-case')
         });
 
         /**
@@ -321,48 +372,41 @@
             document.getElementById('powerCheckbox').checked = my_config.powerCheckbox;
 
             document.getElementById('freqCheckbox').checked = false;
-            if (!my_config.freqCheckbox || my_config.FreqInput === undefined) {
-                document.getElementById('FreqInput').setAttribute('placeholder', '10');
-            } else {
-                document.getElementById('FreqInput').value = my_config.FreqInput;
-            }
+            document.getElementById('FreqInput').value = my_config.FreqInput;
 
             document.getElementById('intervalCheckbox').checked = false;
-            if (!my_config.intervalCheckbox || my_config.IntervalInput === undefined) {
-                document.getElementById('IntervalInput').setAttribute('placeholder', '∞');
-            } else {
-                document.getElementById('IntervalInput').value = my_config.IntervalInput;
-            }
+            document.getElementById('IntervalInput').value = my_config.IntervalInput;
 
             document.getElementById('smoothingCheckbox').checked = false;
-            if (!my_config.smoothingCheckbox || my_config.SmoothingInput === undefined) {
-                document.getElementById('SmoothingInput').setAttribute('placeholder', '1');
-            } else {
-                document.getElementById('SmoothingInput').value = my_config.SmoothingInput;
-            }
+            document.getElementById('SmoothingInput').value = my_config.SmoothingInput;
 
             document.getElementById('verboseCheckbox').checked = my_config.verboseCheckbox;
 
         }
 
         /**
-         * Function to load the graphics from the file, and to display the correct value in the form
+         * Function to load the graphics configuration from the file, and to display the correct value in the form
          * @param graphics
          */
         function LoadGraphics(graphics) {
             document.getElementById('meanCheckbox').checked = false;
-            if (graphics.mean_display === undefined) {
-                document.getElementById('meanInput').setAttribute('placeholder', '1');
-            } else {
-                document.getElementById('meanInput').value = graphics.mean_display;
-            }
+            document.getElementById('meanInput').value = graphics.mean_display;
 
             document.getElementById('slidingWindowCheckbox').checked = false;
-            console.log(graphics)
-            if (graphics.sliding_window === undefined) {
-                document.getElementById('slidingWindowInput').setAttribute('placeholder', '1');
-            } else {
-                document.getElementById('slidingWindowInput').value = graphics.sliding_window_size;
+            document.getElementById('slidingWindowInput').value = graphics.sliding_window_size;
+        }
+
+        /**
+         * Function to load the saving configuration from the file, and to display the correct value in the form
+         * @param saving
+         */
+        function LoadSaving(saving) {
+            document.getElementById('saveCheckbox').checked = saving.change_file_name;
+            if (saving.change_file_name) {
+                document.getElementById('saveInput').value = saving.user_file_name;
+            }
+            else {
+                document.getElementById('saveInput').setAttribute('placeholder', saving.default_file_name);
             }
         }
 

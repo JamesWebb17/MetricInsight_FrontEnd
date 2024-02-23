@@ -132,7 +132,7 @@
     <canvas id="GPU_Chart" width="400" height="200"></canvas>
 
     <!-- Save button -->
-    <button id="GPU_saveButton" class="btn btn-primary mt-3" ali>Save Data</button>
+    <button id="GPU_saveButton" class="btn btn-primary mt-3" >Save Data</button>
 </div>
 
 <div id="Memory_Chart_Container" class="container mt-5 text-center" style="display:none;">
@@ -375,7 +375,7 @@
                 } else {
                     console.log("Error while stopping MetricInsight");
                 }
-                console.log(data); // Accès aux données renvoyées par le serveur
+                //console.log(data); // Accès aux données renvoyées par le serveur
             })
             .catch(error => {
                 console.error('Erreur lors de la requête fetch :', error);
@@ -409,7 +409,7 @@
             }
 
             else {
-                console.log(name);
+                //console.log(name);
                 if (name === 'Power') {
                     let dataToPlot = [[], [], [], []];
 
@@ -420,7 +420,7 @@
                         dataToPlot[3].push([data['data'][i][0], data['data'][i][4]]);
                     }
 
-                    console.log(dataToPlot);
+                    //console.log(dataToPlot);
 
                     addDataToGraph(dataToPlot[0], Charts['vdd_gpu_soc']);
                     addDataToGraph(dataToPlot[1], Charts['vdd_cpu_cv']);
@@ -449,7 +449,7 @@
                         dataToPlot[12].push([data['data'][i][0], data['data'][i][13]]);
                     }
 
-                    console.log(dataToPlot);
+                    //console.log(dataToPlot);
 
                     addDataToGraph(dataToPlot[0], Charts['CPU']);
                     addDataToGraph(dataToPlot[1], Charts['CPU_0']);
@@ -467,7 +467,7 @@
 
                 }
                 else {
-                    console.log(data);
+                    //console.log(data);
                     addDataToGraph(data['data'], Charts[name]);
 
                 }
@@ -484,28 +484,100 @@
     document.addEventListener('DOMContentLoaded', init);
 
     document.getElementById('saveDataButton').addEventListener('click', function () {
-        saveAllChartData(Charts)
+        saveData('GPU')
+        saveData('CPU')
+        saveData('Memory')
+        saveData('Power')
+        saveData('CPU_PID')
+        saveData('Memory_PID')
     });
 
-    function saveAllChartData(Charts) {
+    document.getElementById('GPU_saveButton').addEventListener('click', function () {
+        saveData('GPU')
+    });
 
-        let ChartData = {};
+    document.getElementById('CPU_saveButton').addEventListener('click', function () {
+        saveData('CPU')
+    });
 
-        for (let chartName in Charts) {
-            ChartData[chartName] = {
-                labels: Charts[chartName].data.labels,
-                datasets: [{
-                    label: Charts[chartName].data.datasets[0].label,
-                    data: Charts[chartName].data.datasets[0].data,
-                }]
-            };
-        }
+    document.getElementById('Memory_saveButton').addEventListener('click', function () {
+        saveData('Memory')
+    });
 
-        // Convertissez les données en format JSON
-        let jsonData = JSON.stringify(ChartData, null, 2); // L'utilisation de null et 2 ajoute l'indentation pour une meilleure lisibilité
+    document.getElementById('Power_saveButton').addEventListener('click', function () {
+        saveData('Power')
+    });
 
+    document.getElementById('CPU_PID_saveButton').addEventListener('click', function () {
+        saveData('CPU_PID')
+    });
+
+    document.getElementById('Memory_PID_saveButton').addEventListener('click', function () {
+        saveData('Memory_PID')
+
+    window.addEventListener('unload', function (e) {
+        const message = "Attention ! Vous êtes en train de quitter la page ou de la recharger. Toutes les modifications non sauvegardées seront perdues.";
+        console.log(message); // Vous pouvez afficher un message dans la console
+        // Vous ne pouvez pas personnaliser la boîte de dialogue de confirmation ici
+    });
+
+    });
+
+    function saveData(name) {
+        fetch(`/api/MetricInsight/save_data/${name}`)
+            .then(response => {
+                // Vérifier si la requête a réussi (statut HTTP 200-299)
+                if (!response.ok) {
+                    throw new Error(`Erreur de réseau : ${response.status}`);
+                }
+
+                // Récupérer le nom du fichier à partir de l'en-tête
+                let file_name = response.headers.get('Content-Disposition').split('filename=')[1];
+
+                // Lire le corps de la réponse comme texte
+                return response.text().then(data => ({ file_name, data }));
+            })
+            .then(data => {
+                // Traiter le texte (qui est le contenu du fichier CSV)
+                console.log(data);
+
+                let file_name = data.file_name;
+                console.log(file_name);
+
+                // Switch sur le nom pour sauvegarder les données
+                switch (name) {
+                    case 'ALL':
+                        Download(data.data, file_name);
+                        break;
+                    case 'CPU':
+                        Download(data.data, file_name);
+                        break;
+                    case 'Memory':
+                        Download(data.data, file_name);
+                        break;
+                    case 'GPU':
+                        Download(data.data, file_name);
+                        break;
+                    case 'Power':
+                        Download(data.data, file_name);
+                        break;
+                    case 'CPU_PID':
+                        Download(data.data, file_name);
+                        break;
+                    case 'Memory_PID':
+                        Download(data.data, file_name);
+                        break;
+                    default:
+                        console.log('Error while saving data : unknown name');
+                }
+
+            })
+            .catch(error => console.error('Erreur lors de la récupération du fichier :', error));
+    }
+
+    function Download(data, filename) {
         // Créez un objet Blob avec le contenu JSON
-        let blob = new Blob([jsonData], { type: 'application/json' });
+        let blob = new Blob([data], { type: 'application/csv' });
 
         // Créez un objet URL pour le Blob
         let url = URL.createObjectURL(blob);
@@ -513,7 +585,7 @@
         // Créez un élément d'ancre pour déclencher le téléchargement
         let a = document.createElement('a');
         a.href = url;
-        a.download = 'chart_data.json'; // Nom du fichier à télécharger
+        a.download = filename + '.csv'; // Nom du fichier à télécharger
 
         // Ajoutez l'élément d'ancre à la page et cliquez dessus pour déclencher le téléchargement
         document.body.appendChild(a);

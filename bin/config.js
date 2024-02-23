@@ -66,5 +66,40 @@ module.exports = {
          */
         sliding_window_size: 10,
     },
+
+    /**
+     * @description It is used to configure the saving options
+     */
+    saving: {
+        /**
+         * @description It is used to define the default path to save the configuration files
+         * @default ../UserConfigurationFiles/
+         * @type {string}
+         */
+        default_path: '../UserSavingDataFiles/',
+
+        /**
+         * @description It is used to define the default name of files to save the user data
+         * @default Date in format YYYY-MM-DD
+         * @type {string}
+         */
+        default_file_name: new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth() + 1) + '-' + new Date().getUTCDate(),
+
+        /**
+         * @description It is used to define if the user wants to change the file name
+         * @default false
+         * @type {boolean}
+         */
+        change_file_name: false,
+
+        /**
+         * @description It is used to define the user file name
+         * @default ""
+         * @type {string}
+         */
+        user_file_name: ""
+
+
+    }
 };
 
