@@ -331,7 +331,7 @@ function saveData(name, folderName, newData) {
     }
 
     let date = new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth() + 1) + '-' + new Date().getUTCDate();
-    let filePath = `${folderPath}/${date}_${name}.csv`;
+    let filePath = `${folderPath}/${name}.csv`;
 
     if (newData.length === 0) {
         //console.log('No data to save');

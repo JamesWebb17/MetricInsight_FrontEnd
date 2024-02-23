@@ -9,7 +9,7 @@ This application is used to display the data from the backend and to configure t
 
 You can find the backend of the application [here](https://github.com/JamesWebb17/MetricInsight_BackEnd)
 
-This project is made by : Faucher Simon
+This project is made by : [Faucher Simon](https://www.linkedin.com/in/Faucher-Simon/)
 
 Version : 1.0
 
@@ -115,7 +115,7 @@ npm start
 
 You should see the following message in the console:
 
-```bash
+```
 Server is running at [Your IP]:[Your Port]
 webapp:server Listening on port [Your Port] +0ms
 ```
