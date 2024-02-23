@@ -13,7 +13,7 @@ This project is made by : Faucher Simon
 
 Version : 1.0
 
-# Summary
+## Summary
 
 - [MetricInsights Frontend](#metricinsights-frontend)
 - [Summary](#summary)
@@ -38,13 +38,13 @@ Version : 1.0
 - [Contact](#contact)
 - [Acknowledgements](#acknowledgements)
 
-# Installation
+## Installation
 
-## Prerequisites
+### Prerequisites
 
 To install the project, you need to have Node.js installed on your computer.
 
-## Dependencies
+### Dependencies
 
 This is the list of the dependencies used in the project:
 
@@ -73,7 +73,7 @@ To install the dependencies, you need to run the following command in the [root]
 npm install
 ```
 
-## Set up your environment
+### Set up your environment
 
 To set the project, you need to change the [.env](./bin/.env) file in the [bin](./bin) directory of the project.
 
@@ -105,7 +105,7 @@ FRONTEND_IP=10.10.10.10
 BACKEND_PORT=3001
 BACKEND_IP=10.10.10.11
 ```
-## Running the project
+### Running the project
 
 To run the project, you need to run the following command in the [bin](./bin) directory of the project:
 
@@ -120,13 +120,13 @@ Server is running at [Your IP]:[Your Port]
 webapp:server Listening on port [Your Port] +0ms
 ```
 
-# Organization
+## Organization
 
-## Directory structure
+### Directory structure
 
 This is the directory structure of the project:
 
-```bash
+```
 .
 ├── bin
 │   ├── .env
@@ -175,7 +175,7 @@ This is the directory structure of the project:
 └── README.md
 ```
 
-## Files
+### Files
 
 This is the list of the files in the project:
 
@@ -194,9 +194,9 @@ This is the list of the files in the project:
 - [package-lock.json](./package-lock.json) : This file contains the list of the dependencies with the version of the dependencies.
 - [README.md](./README.md) : This file contains the documentation of the application.
 
-# Docker
+## Docker
 
-## Build the image
+### Build the image
 
 To build the image, you need to run the following command in the [root](./) directory of the project:
 
@@ -204,7 +204,7 @@ To build the image, you need to run the following command in the [root](./) dire
 docker build -t metricinsights-frontend .
 ```
 
-## Run the container
+### Run the container
 
 To run the container, you need to run the following command in the [root](./) directory of the project:
 
@@ -212,7 +212,7 @@ To run the container, you need to run the following command in the [root](./) di
 docker run -p 3000:3000 -d metricinsights-frontend
 ```
 
-## Stop the container
+### Stop the container
 
 To stop the container, you need to run the following command in the [root](./) directory of the project:
 
@@ -220,7 +220,7 @@ To stop the container, you need to run the following command in the [root](./) d
 docker stop [container_id]
 ```
 
-## Remove the container
+### Remove the container
 
 To remove the container, you need to run the following command in the [root](./) directory of the project:
 
@@ -228,7 +228,7 @@ To remove the container, you need to run the following command in the [root](./)
 docker rm [container_id]
 ```
 
-## Remove the image
+### Remove the image
 
 To remove the image, you need to run the following command in the [root](./) directory of the project:
 
@@ -236,9 +236,9 @@ To remove the image, you need to run the following command in the [root](./) dir
 docker rmi metricinsights-frontend
 ```
 
-# Documentation
+## Documentation
 
-## JSDoc
+### JSDoc
 
 To generate the JSDoc, you need to run the following command in the [root](./) directory of the project:
 
@@ -248,19 +248,19 @@ npm run doc
 
 The documentation will be generated in the [public/Documentation/Frontend](./public/Documentation/Frontend) directory of the project.
 
-## API
+### API
 
 The API documentation is available in the [public/Documentation/Backend](./public/Documentation/Backend) directory of the project.
 
-# License
+## License
 
 This project is licensed under the CC License - see the [LICENSE](LICENSE) file for details.
 
-# Contact
+## Contact
 
 - Email : simon.faucher@etudiant.univ-rennes1.fr
 
-# Acknowledgements
+## Acknowledgements
 
 
 Thank to [Robin Gerzaguet](https://perso.univ-rennes1.fr/robin.gerzaguet/) whose enlightened advice helped me
